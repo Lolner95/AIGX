@@ -3,6 +3,16 @@
 All notable changes to the AIGX specification and repository are documented here. This project adheres to
 [Semantic Versioning](https://semver.org) for the spec.
 
+## [Unreleased]
+
+### Planned
+- Exporters: `aigx → AGENTS.md / CLAUDE.md / .cursor/rules`
+- VS Code extension - hover a source file, see its `.aigx` boundary inline
+- Monorepo-scale benchmark (5k+ files) - specification is in place, measurement is future work
+- Additional worked examples: Python (FastAPI), Go, monorepo
+
+---
+
 ## [1.1.0] - 2026-06-15
 
 Hardening release: scaling, tooling, and an honesty pass in response to review.
@@ -46,5 +56,6 @@ The first public release of AIGX (AI Genome Exchange).
 - A complete worked example (`examples/sourcing-app/`) and copy-ready starter templates.
 - `llms.txt`, `CITATION.cff`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, MIT `LICENSE`.
 
+[Unreleased]: https://github.com/Lolner95/AIGX/compare/v1.1.0...HEAD
 [1.1.0]: https://github.com/Lolner95/AIGX/releases/tag/v1.1.0
 [1.0.0]: https://github.com/Lolner95/AIGX/releases/tag/v1.0.0

@@ -41,7 +41,9 @@ python aigx_lint.py --stats --root .
 > only the genome, not the application source - which is exactly the "moved/missing file" signal the linter
 > is built to catch. Run it against a real checkout to see it pass clean.
 
-## CI example (GitHub Actions)
+## CI examples
+
+**GitHub Actions:**
 
 ```yaml
 name: aigx
@@ -54,6 +56,29 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.x" }
       - run: python tools/aigx-lint/aigx_lint.py --root .
+```
+
+**GitLab CI:**
+
+```yaml
+aigx-lint:
+  image: python:3.12-slim
+  script:
+    - python tools/aigx-lint/aigx_lint.py --root .
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+```
+
+**Bitbucket Pipelines:**
+
+```yaml
+pipelines:
+  default:
+    - step:
+        name: Lint AIGX genome
+        image: python:3.12-slim
+        script:
+          - python tools/aigx-lint/aigx_lint.py --root .
 ```
 
 That's the whole answer to "decoupled docs rot": don't decouple *and walk away* - decouple *and lint*.

@@ -57,7 +57,7 @@ The read protocol. It is the first thing an agent reads. It MUST instruct the ag
 `files.aigx` for each file it edits and to verify the file's `<check>` ids before finishing.
 
 ```xml
-<aigx-protocol>
+<aigx-protocol version="1.1">
   <read-first>Open .aigx/files.aigx and find the <file> entry for EACH file you will edit … obey its
    <forbid pri="CRIT"> and satisfy every id in its <check> before finishing.</read-first>
   <step n="1">Read the per-concern rule files in .aigx/ that the task touches.</step>
@@ -197,6 +197,14 @@ A directory is a **conforming AIGX v1.0 genome** if it has, at minimum:
 
 A conforming **AIGX reader** (agent or tool) MUST, for each file it edits, consult that file's `files.aigx`
 entry and honor its `<forbid>` and `<check>`.
+
+---
+
+## 7. Comments and annotations
+
+AIGX files MAY contain XML comments (`<!-- … -->`) for human authoring notes. Conforming readers MUST
+ignore XML comments and MUST NOT treat them as rules, boundaries, or structured content. Comments are
+useful for annotating why a rule exists or flagging a `<forbid>` for review; they have no semantic effect.
 
 ---
 

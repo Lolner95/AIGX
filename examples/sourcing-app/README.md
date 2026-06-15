@@ -43,3 +43,29 @@ sourcing-app/
 
 Open [`.aigx/files.aigx`](.aigx/files.aigx) first - it's the keystone and the clearest illustration of what
 AIGX adds over a flat rules file.
+
+## Validating this example
+
+```bash
+# From the repo root:
+python tools/aigx-lint/aigx_lint.py --stats --root examples/sourcing-app
+```
+
+This prints genomes, rule count, entry count, and forbid scarcity. `--validate` will report the `src/**`
+paths as missing (expected - only the genome ships, not the app source). Against a real checkout it
+would pass clean.
+
+To look up one file's boundary entry:
+
+```bash
+python tools/aigx-lint/aigx_lint.py --resolve src/features/meetings/bookMeeting.ts \
+  --root examples/sourcing-app
+```
+
+## How to read it as a learning exercise
+
+1. Open `.aigx/files.aigx` - skim all 35 entries. Notice: only 4 have `<forbid>`, each is one line.
+2. Open `.aigx/engineering.aigx` - these are the 10 hard-correctness invariants (TOCTOU, money, DST,
+   ReDoS, IDOR, …). See how ENG-1 through ENG-10 are referenced in `<check>` lists across `files.aigx`.
+3. Open any `src/<feature>/<domain>.aigx` card - this is a per-domain card showing placement and content.
+4. Read the [authoring guide](../../docs/authoring-guide.md) alongside to understand the decisions.

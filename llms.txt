@@ -12,10 +12,11 @@
 ## Core docs
 
 - [README](README.md): overview, proof, quick start, comparison, FAQ.
-- [Specification (v1.0)](SPEC.md): the normative format definition - directory layout, file grammar, rule
-  ids, the per-file boundary index, the agent addendum, conformance.
+- [Specification (v1.1)](SPEC.md): the normative format definition - directory layout, file grammar, rule
+  ids, the per-file boundary index, the agent addendum, conformance, comments clause, monorepo scaling.
 - [Benchmark](BENCHMARK.md): full methodology, n=60 results on two models, the challenger log, and the
   honest caveats.
+- [Changelog](CHANGELOG.md): spec version history with migration notes.
 
 ## Concepts and guides
 
@@ -23,15 +24,27 @@
 - [Principles](docs/principles.md): seven benchmark-backed laws for writing context for AI agents.
 - [Authoring guide](docs/authoring-guide.md): how to write a genome for your codebase, with a checklist.
 - [FAQ](docs/faq.md): common questions, comparisons to AGENTS.md / CLAUDE.md / Cursor rules / llms.txt.
+- [Limitations](docs/limitations.md): honest scope, threats to validity, and responses to critiques.
+- [Migration guide](docs/migration.md): how to adopt AIGX alongside an existing AGENTS.md / CLAUDE.md.
+- [Glossary](docs/glossary.md): terms and definitions used in the spec and docs.
 
 ## Example and templates
 
 - [Worked example](examples/sourcing-app/): a complete real-world genome (.aigx/ + per-domain cards).
+- [Minimal example](examples/minimal/): the smallest valid genome - 3 files, one rule, one index entry.
 - [Starter templates](templates/starter/.aigx/): copy into your repo to begin.
+
+## Tooling
+
+- [aigx-lint](tools/aigx-lint/): zero-dependency Python validator + resolver. CI-ready. `--resolve PATH`
+  returns one file's boundary entry in O(1).
 
 ## Key facts
 
+- Spec version: v1.1 (stable, normative).
 - License: MIT (free to use, fork, and build on).
 - Format: plain-text XML-style tags in a `.aigx/` directory; nothing injected into source code.
 - Integration: one instruction line added to any agent's config (AGENTS.md, CLAUDE.md, Cursor rules, etc.).
 - Differentiators: per-file boundary index, zero source-code injection, tool-agnostic, benchmark-validated.
+- Honest caveat: the top context formats are statistically tied on the mean; AIGX's edge is cross-model
+  consistency, robustness under challenge, simplicity, and being the only format that was measured at all.

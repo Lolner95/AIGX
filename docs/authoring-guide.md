@@ -124,5 +124,8 @@ each package's `files.aigx` is short and stable independently of sibling package
 | Grade salience (CRIT/HIGH/LOW) | Uniform `CRIT` won; grading reduced compliance |
 | Add a routing map / worked example to the protocol | Tied at best; usually noise |
 | Restate critical rules at top & bottom | Position is a weak lever for selective readers (L2) |
+| Duplicate a rule in multiple concern files | One authoritative id per rule; duplication causes parity failures when one copy drifts |
+| Write essays in `<rule>` text | One sentence per rule - the benchmark showed prose explanations reduce compliance (L1) |
+| Index every file in the repo | Only index files an agent realistically edits; over-indexing bloats context with entries that are never needed |
 
 **When in doubt, do less.** The winning genome is the simple one.

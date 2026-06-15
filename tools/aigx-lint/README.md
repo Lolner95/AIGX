@@ -81,4 +81,32 @@ pipelines:
           - python tools/aigx-lint/aigx_lint.py --root .
 ```
 
+**Pre-commit hook** (catches issues before they reach CI):
+
+```bash
+# Install once: copy to .git/hooks/pre-commit and make it executable
+#!/usr/bin/env bash
+set -e
+python tools/aigx-lint/aigx_lint.py --root .
+```
+
+```bash
+chmod +x .git/hooks/pre-commit
+```
+
+Or use [`pre-commit`](https://pre-commit.com) framework with a local hook:
+
+```yaml
+# .pre-commit-config.yaml
+repos:
+  - repo: local
+    hooks:
+      - id: aigx-lint
+        name: Lint AIGX genome
+        entry: python tools/aigx-lint/aigx_lint.py --root .
+        language: python
+        pass_filenames: false
+        always_run: true
+```
+
 That's the whole answer to "decoupled docs rot": don't decouple *and walk away* - decouple *and lint*.

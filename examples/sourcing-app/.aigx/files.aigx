@@ -37,7 +37,7 @@
   </file>
   <file path="src/features/suppliers/internal/contactMapper.ts" domain="suppliers">
     <role>INTERNAL contact mapper (private)</role>
-    <forbid pri="CRIT">NEVER import @/features/meetings (suppliers must NOT depend on meetings — cycle risk, ARCH-4)</forbid>
+    <forbid pri="CRIT">NEVER import @/features/meetings (suppliers must NOT depend on meetings - cycle risk, ARCH-4)</forbid>
     <gotcha pri="CRIT">this file sits on the cycle boundary; if booking needs contact data, expose it via the suppliers barrel, do not import meetings here</gotcha>
     <check>ARCH-2 ARCH-4</check>
   </file>
@@ -56,7 +56,7 @@
   </file>
   <file path="src/features/ai-recommendations/recommend.ts" domain="ai-recommendations">
     <role>AI sourcing recommendations</role>
-    <gotcha pri="CRIT">marketing_copy is display-only — never a fact, never in a prompt, never in output (AI-4); enhancement is async, never block base results (AI-5)</gotcha>
+    <gotcha pri="CRIT">marketing_copy is display-only - never a fact, never in a prompt, never in output (AI-4); enhancement is async, never block base results (AI-5)</gotcha>
     <check>AI-1 AI-2 AI-3 AI-4 AI-5</check>
   </file>
   <file path="src/features/ai-recommendations/aiClient.ts" domain="ai-recommendations">
@@ -82,7 +82,7 @@
   </file>
   <file path="src/features/offline/swRegister.ts" domain="offline">
     <role>Service-worker lifecycle</role>
-    <gotcha pri="CRIT">registration MUST be lazy via onAppIdle after first paint — never at module import time (OFF-4/PERF-5)</gotcha>
+    <gotcha pri="CRIT">registration MUST be lazy via onAppIdle after first paint - never at module import time (OFF-4/PERF-5)</gotcha>
     <check>OFF-4 PERF-5</check>
   </file>
   <file path="src/features/saved/savedSuppliers.ts" domain="saved">
@@ -92,7 +92,7 @@
   </file>
   <file path="src/backend/repositories/supplierRepo.ts" domain="backend-repositories">
     <role>Supplier data access (event-partitioned)</role>
-    <gotcha pri="CRIT">findByBrand must take eventId and scope to it — brands repeat across events</gotcha>
+    <gotcha pri="CRIT">findByBrand must take eventId and scope to it - brands repeat across events</gotcha>
     <check>DATA-1 DATA-2 DATA-3</check>
   </file>
   <file path="src/backend/repositories/meetingRepo.ts" domain="backend-repositories">
@@ -126,7 +126,7 @@
   </file>
   <file path="src/features/meetings/slotReservation.ts" domain="meetings">
     <role>Atomic slot reservation under concurrency</role>
-    <gotcha pri="CRIT">reserve atomically — the check and the commit straddle an await (TOCTOU), so concurrent callers double-book; close that gap so exactly one of N concurrent reservers wins (ENG-1)</gotcha>
+    <gotcha pri="CRIT">reserve atomically - the check and the commit straddle an await (TOCTOU), so concurrent callers double-book; close that gap so exactly one of N concurrent reservers wins (ENG-1)</gotcha>
     <check>ENG-1</check>
   </file>
   <file path="src/features/orders/pricing.ts" domain="orders">
@@ -136,7 +136,7 @@
   </file>
   <file path="src/features/meetings/scheduling.ts" domain="meetings">
     <role>Local→UTC slot conversion across time zones</role>
-    <gotcha pri="CRIT">derive the offset from the IANA tz database (Intl) for the actual instant; never hardcode a fixed offset — DST makes it wrong half the year (ENG-3)</gotcha>
+    <gotcha pri="CRIT">derive the offset from the IANA tz database (Intl) for the actual instant; never hardcode a fixed offset - DST makes it wrong half the year (ENG-3)</gotcha>
     <check>ENG-3</check>
   </file>
   <file path="src/features/search/textMatch.ts" domain="search">
@@ -146,7 +146,7 @@
   </file>
   <file path="src/features/search/pagination.ts" domain="search">
     <role>Cursor pagination over ranked results</role>
-    <gotcha pri="CRIT">page by a stable cursor over (score,id), never numeric offset — an insert between page fetches must not skip or duplicate a result (ENG-5)</gotcha>
+    <gotcha pri="CRIT">page by a stable cursor over (score,id), never numeric offset - an insert between page fetches must not skip or duplicate a result (ENG-5)</gotcha>
     <check>ENG-5</check>
   </file>
   <file path="src/features/meetings/idempotentBooking.ts" domain="meetings">
@@ -161,7 +161,7 @@
   </file>
   <file path="src/features/search/filterParser.ts" domain="search">
     <role>Advanced filter parser (untrusted input)</role>
-    <gotcha pri="CRIT">the clause regex has nested quantifiers — a ReDoS; parse in linear time with the same accepted tokens (ENG-8)</gotcha>
+    <gotcha pri="CRIT">the clause regex has nested quantifiers - a ReDoS; parse in linear time with the same accepted tokens (ENG-8)</gotcha>
     <check>ENG-8</check>
   </file>
   <file path="src/features/meetings/lifecycle.ts" domain="meetings">

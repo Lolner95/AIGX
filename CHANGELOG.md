@@ -3,18 +3,18 @@
 All notable changes to the AIGX specification and repository are documented here. This project adheres to
 [Semantic Versioning](https://semver.org) for the spec.
 
-## [1.1.0] — 2026-06-15
+## [1.1.0] - 2026-06-15
 
 Hardening release: scaling, tooling, and an honesty pass in response to review.
 
 ### Spec
 - **§8 Scaling** ([SPEC.md](SPEC.md#8-scaling-to-large-repositories--monorepos)): **hierarchical (sharded)
-  genomes** — one `.aigx/` per package/workspace, each `files.aigx` scoping its own subtree — and
+  genomes** - one `.aigx/` per package/workspace, each `files.aigx` scoping its own subtree - and
   **per-file resolution** (O(1) lookup), so context cost is bounded on monorepos. Backwards-compatible.
 
 ### Tooling
 - **`aigx-lint`** ([tools/aigx-lint](tools/aigx-lint/)): zero-dependency validator + resolver. Checks every
-  `<file path>` exists and every `<check>` id resolves (CI-enforceable freshness — the genome can't silently
+  `<file path>` exists and every `<check>` id resolves (CI-enforceable freshness - the genome can't silently
   rot), and resolves any file's boundary entry in O(1).
 
 ### Docs
@@ -25,7 +25,7 @@ Hardening release: scaling, tooling, and an honesty pass in response to review.
   the defensible claims (cross-tier consistency, robustness, simplicity, only-one-measured).
 - Reframed principle **L2** as *per-file addressability* (not physical colocation) for precision.
 
-## [1.0.0] — 2026-06-15
+## [1.0.0] - 2026-06-15
 
 The first public release of AIGX (AI Genome Exchange).
 

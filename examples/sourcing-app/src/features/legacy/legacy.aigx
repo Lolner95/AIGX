@@ -1,8 +1,8 @@
 <aigx-domain key="legacy" path="src/features/legacy">
   <purpose>Quarantined: the 2024 MegaSupplierPage God-component.</purpose>
-  <public_api>(none — quarantined)</public_api>
+  <public_api>(none - quarantined)</public_api>
   <test>its UI unit test predates the test policy and is not a pattern to follow</test>
-  <blast>quarantined — do not extend</blast>
+  <blast>quarantined - do not extend</blast>
   <facts>
     <fact>Do not add code here. New work lives in proper feature slices.</fact>
     <fact>Decomposition is tracked product work: schemas first, logic colocated with its feature, UI dumb, AI async, auth at valuable actions only.</fact>

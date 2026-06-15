@@ -1,14 +1,14 @@
 # aigx-lint
 
 A tiny, **zero-dependency** (Python 3.8+ stdlib) validator and resolver for AIGX genomes. It exists to
-kill the two most common objections to a centralized context format — *"it rots"* and *"it won't scale"* —
+kill the two most common objections to a centralized context format - *"it rots"* and *"it won't scale"* -
 by making both mechanically false.
 
 ## Why
 
 - **It can't rot silently.** `aigx-lint` checks the genome against the **actual repository**: every
   `<file path>` must still exist on disk, and every `<check>` id must resolve to a real `<rule>`. Run it in
-  CI or a pre-commit hook and a moved/renamed file **fails the build** until its entry is fixed — the same
+  CI or a pre-commit hook and a moved/renamed file **fails the build** until its entry is fixed - the same
   discipline teams already use for `CODEOWNERS` and `tsconfig` path maps.
 - **It scales by resolution, not ingestion.** `--resolve PATH` returns just one file's entry, so an agent's
   context cost is **O(1) per edited file**, independent of index size. A 50,000-entry index is one lookup.
@@ -21,7 +21,7 @@ by making both mechanically false.
 # Validate the genome(s) under the current repo. Exits non-zero on errors (CI-friendly).
 python aigx_lint.py --root .
 
-# Print just one file's boundary entry — constant-cost lookup an agent/MCP can call.
+# Print just one file's boundary entry - constant-cost lookup an agent/MCP can call.
 python aigx_lint.py --resolve src/features/meetings/bookMeeting.ts --root .
 
 # Summary: genomes, rules, entries, and the all-important forbid scarcity.
@@ -38,7 +38,7 @@ python aigx_lint.py --stats --root .
 
 > Try it on [`examples/sourcing-app/`](../../examples/sourcing-app/): `--stats` and `--resolve` work
 > directly; `--validate` will (correctly!) report the `src/**` paths as missing, because that example ships
-> only the genome, not the application source — which is exactly the "moved/missing file" signal the linter
+> only the genome, not the application source - which is exactly the "moved/missing file" signal the linter
 > is built to catch. Run it against a real checkout to see it pass clean.
 
 ## CI example (GitHub Actions)
@@ -56,4 +56,4 @@ jobs:
       - run: python tools/aigx-lint/aigx_lint.py --root .
 ```
 
-That's the whole answer to "decoupled docs rot": don't decouple *and walk away* — decouple *and lint*.
+That's the whole answer to "decoupled docs rot": don't decouple *and walk away* - decouple *and lint*.

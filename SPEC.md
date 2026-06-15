@@ -1,9 +1,9 @@
-# AIGX Specification — v1.1
+# AIGX Specification - v1.1
 
 **Status:** Stable · **Version:** 1.1 · **License:** MIT · **Last updated:** 2026-06-15
 
-> **v1.1 adds [§8 Scaling](#8-scaling-to-large-repositories--monorepos)** — hierarchical (sharded)
-> genomes and per-file resolution — so the format bounds context cost on large repositories and monorepos.
+> **v1.1 adds [§8 Scaling](#8-scaling-to-large-repositories--monorepos)** - hierarchical (sharded)
+> genomes and per-file resolution - so the format bounds context cost on large repositories and monorepos.
 > v1.1 is backwards-compatible with v1.0 (a single root `.aigx/` is the one-package case).
 
 AIGX (AI Genome Exchange) is a context format for AI coding agents. This document is the **normative**
@@ -22,12 +22,12 @@ colocated with source folders.
 ```text
 <repo-root>/
 ├── .aigx/
-│   ├── protocol.aigx        # REQUIRED — the read protocol
-│   ├── product.aigx         # RECOMMENDED — product context + doc freshness
-│   ├── files.aigx           # REQUIRED — the per-file boundary index
-│   └── <concern>.aigx       # REQUIRED (≥1) — per-concern rule files
+│   ├── protocol.aigx        # REQUIRED - the read protocol
+│   ├── product.aigx         # RECOMMENDED - product context + doc freshness
+│   ├── files.aigx           # REQUIRED - the per-file boundary index
+│   └── <concern>.aigx       # REQUIRED (≥1) - per-concern rule files
 └── <any source dir>/
-    └── <key>.aigx           # OPTIONAL — a per-domain card
+    └── <key>.aigx           # OPTIONAL - a per-domain card
 ```
 
 - Files use the `.aigx` extension and UTF-8 encoding.
@@ -43,7 +43,7 @@ Every rule has a stable identifier of the form `PREFIX-N` (e.g. `ARCH-2`, `DATA-
 
 - The `PREFIX` SHOULD name the concern (`ARCH`, `DATA`, `AUTH`, `CACHE`, `PERF`, `TEST`, `AI`, `OFF`,
   `ENG`, …). The prefix is conventionally the uppercased concern name.
-- Ids MUST be stable across edits — they are the cross-reference backbone used by `<check>` lists,
+- Ids MUST be stable across edits - they are the cross-reference backbone used by `<check>` lists,
   `<fact>`s, and gotchas. Renaming a rule id is a breaking change to the genome.
 - Ids are the unit of *parity*: any tool that re-renders a genome MUST preserve the full rule-id set.
 
@@ -73,7 +73,7 @@ scaffolding to the protocol did not improve outcomes and sometimes hurt.
 ### 3.2 `product.aigx` (RECOMMENDED)
 
 Top-level product context. SHOULD include a `<freshness>` element that explicitly states which older
-documents are superseded — this resolves stale-doc conflicts an agent would otherwise inherit.
+documents are superseded - this resolves stale-doc conflicts an agent would otherwise inherit.
 
 ```xml
 <aigx-product name="…">
@@ -84,7 +84,7 @@ documents are superseded — this resolves stale-doc conflicts an agent would ot
 </aigx-product>
 ```
 
-### 3.3 Per-concern rule files — `<concern>.aigx` (REQUIRED, ≥1)
+### 3.3 Per-concern rule files - `<concern>.aigx` (REQUIRED, ≥1)
 
 Each concern file is a flat list of `<rule>` elements carrying the **full** rule text:
 
@@ -99,7 +99,7 @@ Each concern file is a flat list of `<rule>` elements carrying the **full** rule
 - Rule text MUST be the authoritative, complete statement of the rule. Glosses/abbreviations belong (if
   anywhere) in the index, never here.
 
-### 3.4 The per-file boundary index — `files.aigx` (REQUIRED) — the keystone
+### 3.4 The per-file boundary index - `files.aigx` (REQUIRED) - the keystone
 
 A flat list of `<file>` entries, one per source file an agent is likely to edit.
 
@@ -119,27 +119,27 @@ A flat list of `<file>` entries, one per source file an agent is likely to edit.
 | Element | Card. | Meaning |
 |---|---|---|
 | `path` (attr) | 1 | Repo-relative path of the file. REQUIRED. |
-| `domain` (attr) | 0–1 | The domain/feature key this file belongs to. |
-| `<role>` | 0–1 | One line: what this file is for. |
-| `<forbid>` | 0–1 | A hard NEVER-do boundary (typically a forbidden import). **SHOULD be rare** — only files with a real boundary carry one. |
-| `<gotcha>` | 0–1 | The single most important pitfall for this file. |
-| `<check>` | 0–1 | Space-separated rule-ids the agent MUST verify before finishing. |
+| `domain` (attr) | 0-1 | The domain/feature key this file belongs to. |
+| `<role>` | 0-1 | One line: what this file is for. |
+| `<forbid>` | 0-1 | A hard NEVER-do boundary (typically a forbidden import). **SHOULD be rare** - only files with a real boundary carry one. |
+| `<gotcha>` | 0-1 | The single most important pitfall for this file. |
+| `<check>` | 0-1 | Space-separated rule-ids the agent MUST verify before finishing. |
 
 **Normative authoring constraints (these are what the benchmark validated):**
 
 - **Scarcity.** `<forbid>` SHOULD appear on only the few files that truly have an import boundary. Marking
   many files dilutes the signal and measurably reduces compliance.
-- **One gotcha.** Each entry SHOULD carry at most one `<gotcha>` — the single worst pitfall — not a list.
+- **One gotcha.** Each entry SHOULD carry at most one `<gotcha>` - the single worst pitfall - not a list.
 - **Terse fields only.** The index SHOULD carry only `role` + `forbid` + `gotcha` + `check`. Richer
   per-file fields (allow/schema/data/perf) were tested and did not improve outcomes.
 
-### 3.5 Salience — the `pri` attribute
+### 3.5 Salience - the `pri` attribute
 
 `<forbid>` and `<gotcha>` MAY carry `pri="CRIT"`. In the validated design, **all** critical boundaries
 use a single uniform level (`CRIT`). Graded scales (CRIT/WARN, CRIT/HIGH/NORM) were tested and did not
 help. Tools MUST treat an absent `pri` as normal priority.
 
-### 3.6 Per-domain cards — `<key>.aigx` (OPTIONAL)
+### 3.6 Per-domain cards - `<key>.aigx` (OPTIONAL)
 
 Colocated with a source folder, named after the domain key. Gives feature-level context.
 
@@ -162,10 +162,10 @@ Colocated with a source folder, named after the domain key. Gives feature-level 
 To make any agent AIGX-aware, append this to its instructions (system prompt, `AGENTS.md`, `CLAUDE.md`,
 Cursor rule, etc.). It is the only integration step required.
 
-> This repository uses AIGX — the AI Genome Exchange context format. The `.aigx/` directory holds the
+> This repository uses AIGX - the AI Genome Exchange context format. The `.aigx/` directory holds the
 > context: read `.aigx/protocol.aigx` first; then the per-concern rule files (`.aigx/<concern>.aigx`,
 > each a set of `<rule id="…">` tags) your task touches. `.aigx/files.aigx` is the PER-FILE BOUNDARY
-> INDEX: for EACH file you edit, find its `<file path="…">` entry — obey its `<forbid pri="CRIT">`
+> INDEX: for EACH file you edit, find its `<file path="…">` entry - obey its `<forbid pri="CRIT">`
 > (NEVER-imports), heed its `<gotcha>`, and verify every id in its `<check>` before finishing. Each domain
 > folder may have a `<domain>.aigx` card. Keep blast radius local unless justified.
 
@@ -207,7 +207,7 @@ A single root `files.aigx` is correct for a small/mid project, but a flat index 
 
 ### 8.1 Hierarchical (sharded) genomes
 
-A repository MAY contain **multiple `.aigx/` directories** — one per package, workspace, or major subtree:
+A repository MAY contain **multiple `.aigx/` directories** - one per package, workspace, or major subtree:
 
 ```text
 monorepo/
@@ -246,7 +246,7 @@ independent of index size.** The bundled reference linter implements this:
 
 ```bash
 aigx-lint --resolve src/features/meetings/bookMeeting.ts
-# prints exactly that file's <file> entry — nothing else
+# prints exactly that file's <file> entry - nothing else
 ```
 
 A 50,000-entry index thus costs an agent one resolution call (or one grep), not 50,000 lines. Editor and
@@ -256,11 +256,11 @@ MCP integrations SHOULD expose this resolution so the agent never loads a whole 
 
 Because entries reference paths, a genome can drift as files move. A conforming repository SHOULD run a
 validator (e.g. the bundled `aigx-lint`) in CI so that a moved/renamed file **fails the build** until its
-entry is corrected — the same discipline used for `CODEOWNERS`, `tsconfig` path maps, and ESLint
+entry is corrected - the same discipline used for `CODEOWNERS`, `tsconfig` path maps, and ESLint
 import-boundary rules. See [docs/limitations.md §2](docs/limitations.md#2-developer-experience--decoupled-docs-rot-the-moment-a-file-moves).
 
 > **Status:** hierarchical genomes and resolution are specified and tool-supported. They are **not yet
-> benchmarked at monorepo scale** — that's labeled future work, not a measured claim.
+> benchmarked at monorepo scale** - that's labeled future work, not a measured claim.
 
 ## 9. Versioning
 

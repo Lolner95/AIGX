@@ -5,7 +5,7 @@
   <blast>local feature + suppliers public API</blast>
   <facts>
     <fact>Supplier contact data is obtained exclusively through the suppliers public API (ARCH-2). If the barrel lacks what booking needs, add the narrowest function to the barrel inside the suppliers feature.</fact>
-    <fact>A slot hold is keyed by (event_id, supplier_id, slot) — supplier ids repeat across events (DATA-2).</fact>
+    <fact>A slot hold is keyed by (event_id, supplier_id, slot) - supplier ids repeat across events (DATA-2).</fact>
     <fact>meetings may depend on suppliers; suppliers must never depend back on meetings (ARCH-4).</fact>
   </facts>
 </aigx-domain>

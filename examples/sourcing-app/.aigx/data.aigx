@@ -1,7 +1,7 @@
 <aigx-data>
   <rule id="DATA-1">Every supplier/meeting/save query is scoped by event_id. There is no legitimate cross-event read path in buyer-facing code.</rule>
   <rule id="DATA-2">Supplier ids are only unique WITHIN one event (the CMS restarts the sequence per event). Any identity check must use (event_id, supplier_id).</rule>
-  <rule id="DATA-3">Brand names are NOT unique across events — e.g. Voltex exhibits in both Brazil and Mexico 2026. (Corrects docs/LEGACY_README.md §Data, 2026-03-02.)</rule>
+  <rule id="DATA-3">Brand names are NOT unique across events - e.g. Voltex exhibits in both Brazil and Mexico 2026. (Corrects docs/LEGACY_README.md §Data, 2026-03-02.)</rule>
   <rule id="DATA-4">CMS exports are dirty: a field can be absent OR null. Coerce both to safe defaults at the schema boundary; downstream code never sees null-vs-missing.</rule>
   <rule id="DATA-5">Event ids are stable slugs registered in src/features/events/config.ts.</rule>
 </aigx-data>

@@ -4,7 +4,7 @@
   <test>logic unit tests + journey coverage for gating behavior</test>
   <blast>app-wide (gating decisions)</blast>
   <facts>
-    <fact>No login wall at the entrance: anonymous buyers browse the directory instantly (AUTH-1, decision 2026-02-20 — supersedes docs/LEGACY_README.md).</fact>
+    <fact>No login wall at the entrance: anonymous buyers browse the directory instantly (AUTH-1, decision 2026-02-20 - supersedes docs/LEGACY_README.md).</fact>
     <fact>Gate VALUABLE ACTIONS only (save, book, notes) via needsAuthForAction (AUTH-2).</fact>
     <fact>Pending intent survives the auth prompt and completes after sign-in (AUTH-4).</fact>
   </facts>

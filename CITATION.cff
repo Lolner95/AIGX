@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use AIGX or its benchmark, please cite it as below."
-title: "AIGX: AI Genome Exchange — A Benchmark-Validated Context Format for AI Coding Agents"
+title: "AIGX: AI Genome Exchange - A Benchmark-Validated Context Format for AI Coding Agents"
 abstract: >-
   AIGX (AI Genome Exchange) is an open context format for AI coding agents that stores a codebase's rules
   in a centralized .aigx/ directory with a per-file boundary index, injecting nothing into source code. In

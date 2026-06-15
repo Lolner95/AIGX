@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""aigx-lint — validate and resolve AIGX genomes. Zero dependencies (Python 3.8+ stdlib).
+"""aigx-lint - validate and resolve AIGX genomes. Zero dependencies (Python 3.8+ stdlib).
 
 A genome decoupled from source is only a liability if it can rot silently. aigx-lint makes that
 impossible: it checks the genome against the ACTUAL repository, so a moved/renamed file or a dangling
 rule reference fails the check (wire it into CI / a pre-commit hook). It also resolves a single file's
-boundary entry in O(1), so an agent never has to ingest a whole index — the answer to monorepo scale.
+boundary entry in O(1), so an agent never has to ingest a whole index - the answer to monorepo scale.
 
 Supports HIERARCHICAL genomes: every `.aigx/` directory under the root is discovered; each `files.aigx`
 indexes its own subtree; `<file path>` values resolve relative to the repository root.

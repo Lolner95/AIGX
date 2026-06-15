@@ -12,8 +12,8 @@
 
 ## Checklist
 
-- [ ] Focused — one idea per PR.
+- [ ] Focused - one idea per PR.
 - [ ] If it adds complexity to the format, I stated the failure mode it fixes and kept it minimal
-      (see CONTRIBUTING.md — the bar for new structure is high and empirical).
+      (see CONTRIBUTING.md - the bar for new structure is high and empirical).
 - [ ] If normative, I updated `SPEC.md` and the version note.
 - [ ] Examples still conform to the spec.

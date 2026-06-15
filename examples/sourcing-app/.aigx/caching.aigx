@@ -2,6 +2,6 @@
   <rule id="CACHE-1">Static hashed assets (/assets/*): Cache-Control: public, max-age=31536000, immutable.</rule>
   <rule id="CACHE-2">Public catalog endpoints (/api/events/:event_id/catalog and supplier detail): Cache-Control: public, max-age=60, stale-while-revalidate=600.</rule>
   <rule id="CACHE-3">Auth endpoints (/api/auth/*): Cache-Control: no-store. Always.</rule>
-  <rule id="CACHE-4">Anything user-private (saved suppliers, meetings, notes — any /api/users/* route): Cache-Control: private, no-store. Never publicly cacheable.</rule>
+  <rule id="CACHE-4">Anything user-private (saved suppliers, meetings, notes - any /api/users/* route): Cache-Control: private, no-store. Never publicly cacheable.</rule>
   <rule id="CACHE-5">Response middleware order matters: the cache policy must hold on the final response; later middleware must not clobber it (and it must not clobber auth-sensitive headers).</rule>
 </aigx-caching>

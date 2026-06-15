@@ -1,12 +1,12 @@
 <aigx-engineering>
-  <rule id="ENG-1">Concurrency: reserving a scarce resource (a meeting slot) must be atomic. Never check-then-act across an await — two concurrent callers will both pass the check (TOCTOU) and double-book. Commit the reservation in one indivisible step.</rule>
+  <rule id="ENG-1">Concurrency: reserving a scarce resource (a meeting slot) must be atomic. Never check-then-act across an await - two concurrent callers will both pass the check (TOCTOU) and double-book. Commit the reservation in one indivisible step.</rule>
   <rule id="ENG-2">Money: compute monetary amounts in integer minor units (cents), never floating-point dollars. Apply percentage discounts in integer arithmetic and round a fractional resulting cent half-up, once.</rule>
-  <rule id="ENG-3">Time: convert a naive local wall-clock time to a UTC instant using the event's IANA time zone via the runtime time-zone database (Intl). Never hardcode a fixed UTC offset — it is wrong across daylight-saving transitions.</rule>
+  <rule id="ENG-3">Time: convert a naive local wall-clock time to a UTC instant using the event's IANA time zone via the runtime time-zone database (Intl). Never hardcode a fixed UTC offset - it is wrong across daylight-saving transitions.</rule>
   <rule id="ENG-4">Text: search and matching are accent/diacritic-insensitive and Unicode-normalized (so 'eletrônicos' matches 'eletronicos', and precomposed é equals e+combining-accent). Do not rely on naive toLowerCase for non-ASCII.</rule>
   <rule id="ENG-5">Pagination: page by a stable cursor over the sort key (score, id), not by numeric offset. Items inserted between page fetches must never cause a skipped or duplicated result.</rule>
   <rule id="ENG-6">Idempotency: a mutating request carrying an idempotency key must create its effect at most once. A retry with the same key returns the original result and creates no duplicate.</rule>
-  <rule id="ENG-7">Authorization: data access is scoped to the authenticated principal. Never trust a caller-supplied identity (user/buyer id) to select whose data is returned — that is an IDOR. Derive the subject from the session.</rule>
-  <rule id="ENG-8">Input safety: never run a catastrophic-backtracking regex (nested quantifiers) over user input — it is a ReDoS. Parse untrusted input in linear time.</rule>
+  <rule id="ENG-7">Authorization: data access is scoped to the authenticated principal. Never trust a caller-supplied identity (user/buyer id) to select whose data is returned - that is an IDOR. Derive the subject from the session.</rule>
+  <rule id="ENG-8">Input safety: never run a catastrophic-backtracking regex (nested quantifiers) over user input - it is a ReDoS. Parse untrusted input in linear time.</rule>
   <rule id="ENG-9">State machines: enforce legal transitions explicitly. Terminal states are final. Reject an illegal transition with an error rather than silently accepting any target state.</rule>
   <rule id="ENG-10">Resources: caches are bounded (evict least-recently-used past a cap) and subscriptions/listeners are cleaned up. Never let an in-process structure grow without bound.</rule>
 </aigx-engineering>

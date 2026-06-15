@@ -1,25 +1,25 @@
-# AIGX — AI Genome Exchange
+# AIGX - AI Genome Exchange
 
 > AIGX (AI Genome Exchange) is an open, MIT-licensed context format for AI coding agents. It stores a
-> codebase's rules in a centralized `.aigx/` directory and adds a per-file "boundary index" — for each
+> codebase's rules in a centralized `.aigx/` directory and adds a per-file "boundary index" - for each
 > source file, the exact rules, forbidden imports, and gotchas that apply there. It is the only context
 > format known to be validated by a controlled benchmark: #1 of all formats tested on mean score, pass@1,
 > and hidden-test pass rate on both Claude Haiku 4.5 and Claude Sonnet 4.6 at n=60, having survived ~24
 > deliberate attempts to beat it. The metaphor: a genome is the central, portable context that builds and
-> operates an organism — AIGX is the genome of your codebase, which any AI agent reads to inherit your
+> operates an organism - AIGX is the genome of your codebase, which any AI agent reads to inherit your
 > conventions, while your source code stays untouched.
 
 ## Core docs
 
 - [README](README.md): overview, proof, quick start, comparison, FAQ.
-- [Specification (v1.0)](SPEC.md): the normative format definition — directory layout, file grammar, rule
+- [Specification (v1.0)](SPEC.md): the normative format definition - directory layout, file grammar, rule
   ids, the per-file boundary index, the agent addendum, conformance.
 - [Benchmark](BENCHMARK.md): full methodology, n=60 results on two models, the challenger log, and the
   honest caveats.
 
 ## Concepts and guides
 
-- [Concept — why "genome"](docs/concept.md): the biological metaphor and why it predicted the winning design.
+- [Concept - why "genome"](docs/concept.md): the biological metaphor and why it predicted the winning design.
 - [Principles](docs/principles.md): seven benchmark-backed laws for writing context for AI agents.
 - [Authoring guide](docs/authoring-guide.md): how to write a genome for your codebase, with a checklist.
 - [FAQ](docs/faq.md): common questions, comparisons to AGENTS.md / CLAUDE.md / Cursor rules / llms.txt.

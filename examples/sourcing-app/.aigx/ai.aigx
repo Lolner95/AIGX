@@ -1,7 +1,7 @@
 <aigx-ai>
   <rule id="AI-1">AI recommendation output is structured JSON following the recommendation contract: { query, event_id, recommendations: [{ supplier_id, score, match_reasons: [{ attribute, value, reason }], missing_info: [] }] }.</rule>
   <rule id="AI-2">Every match_reason cites a structured DB attribute and its actual value. If the data does not contain a fact, the fact does not exist.</rule>
-  <rule id="AI-3">Facts the buyer asked about that are missing from the DB go into missing_info — never invented, never inferred from prose.</rule>
+  <rule id="AI-3">Facts the buyer asked about that are missing from the DB go into missing_info - never invented, never inferred from prose.</rule>
   <rule id="AI-4">marketing_copy is display-only exhibitor prose. It is never a source of facts, never grounds a claim, and never feeds a prompt as factual context. (Corrects docs/LEGACY_README.md §Frontend conventions, 2026-02-11.)</rule>
   <rule id="AI-5">AI never blocks first page load, search results or meeting requests. Base results render first; AI enhancement arrives asynchronously afterwards.</rule>
 </aigx-ai>

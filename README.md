@@ -288,7 +288,7 @@ Yes - it's MIT. Use it, fork it, build products on it, no permission needed.
 ```text
 aigx/
 ├── README.md            ← you are here
-├── SPEC.md              ← the normative format specification (v1.0)
+├── SPEC.md              ← the normative format specification (v1.1)
 ├── BENCHMARK.md         ← full method, results, raw data, challenger log
 ├── LICENSE              ← MIT
 ├── llms.txt             ← machine-readable index for AI answer engines

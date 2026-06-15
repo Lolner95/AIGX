@@ -95,6 +95,25 @@ Add the [agent addendum](../SPEC.md#agent-addendum) to your existing `AGENTS.md`
 - [ ] Nothing was added to your source files.
 - [ ] You resisted adding routing tables / examples / salience tiers. (We tested them. They don't help.)
 
+## Keeping the genome fresh
+
+A genome entry references a file by path, so it can drift when files are renamed or moved. The answer is
+tooling, not discipline:
+
+1. **Wire `aigx-lint` into CI** (one step in your workflow). It validates every `<file path>` exists on
+   disk and every `<check>` id resolves to a real rule. A renamed file fails the build until the entry is
+   updated - exactly how `CODEOWNERS` is kept honest.
+2. **Run it as a pre-commit hook** so you catch it locally:
+   ```bash
+   # .git/hooks/pre-commit  (chmod +x it)
+   python tools/aigx-lint/aigx_lint.py --root .
+   ```
+3. **Update rule ids carefully.** Rule ids (`ARCH-2`, `ENG-7`, …) are the cross-reference backbone. Treat
+   a rename the same as a function rename: search-and-replace across all `.aigx` files before committing.
+
+The maintenance overhead is small for a small/mid project; for a monorepo, use hierarchical genomes so
+each package's `files.aigx` is short and stable independently of sibling packages.
+
 ## Anti-patterns (measured to be bad)
 
 | Tempting idea | Why it loses |

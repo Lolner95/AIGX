@@ -1,5 +1,9 @@
 # The Concept - Why a "Genome"?
 
+> **TL;DR:** A genome is central, consulted (not copied), and expresses only the locally-relevant genes
+> per cell. AIGX is that for your codebase: rules in `.aigx/`, a per-file index that expresses the right
+> rules at each file, source code left untouched. The metaphor predicted what won the benchmark.
+
 AIGX stands for **AI Genome Exchange**. The name is not decoration; it's the design.
 
 ## The biological idea

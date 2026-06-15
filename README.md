@@ -290,16 +290,23 @@ aigx/
 ├── README.md            ← you are here
 ├── SPEC.md              ← the normative format specification (v1.1)
 ├── BENCHMARK.md         ← full method, results, raw data, challenger log
+├── CHANGELOG.md         ← version history
+├── CONTRIBUTING.md      ← how to contribute
+├── CITATION.cff         ← citation metadata
 ├── LICENSE              ← MIT
 ├── llms.txt             ← machine-readable index for AI answer engines
 ├── docs/
 │   ├── concept.md       ← the genome philosophy, in depth
 │   ├── authoring-guide.md
+│   ├── migration.md     ← how to adopt AIGX alongside an existing AGENTS.md / CLAUDE.md
 │   ├── principles.md    ← the 7 benchmark-backed laws
 │   ├── limitations.md   ← scope, honest caveats & point-by-point responses to critique
+│   ├── glossary.md      ← terms and definitions
+│   ├── roadmap.md       ← planned work: exporters, VS Code ext, more examples, MCP
 │   └── faq.md
 ├── examples/
-│   └── sourcing-app/    ← a complete, real-world genome (.aigx/ + domain cards)
+│   ├── sourcing-app/    ← a complete, real-world genome (.aigx/ + domain cards)
+│   └── minimal/         ← the smallest valid genome (3 files, 1 rule, 1 entry)
 ├── templates/
 │   └── starter/.aigx/   ← copy this into your repo to begin
 └── tools/

@@ -3,6 +3,11 @@
 A benchmark you can't trust is worse than none. This page states the boundaries of the AIGX result and
 answers the strongest objections head-on. We'd rather mark the edge of the map than oversell.
 
+> **Where AIGX shines brightest:** agentic coding workflows (grep → read → edit → test loop) on
+> small-to-medium codebases (5-200 source files) with a defined set of architectural rules and import
+> boundaries. If that describes your project, AIGX is the only context format with a measured result and
+> a toolchain that prevents silent rot.
+
 ---
 
 ## What we claim - and what we explicitly do **not**

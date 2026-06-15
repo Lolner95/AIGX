@@ -1,0 +1,34 @@
+name: Validate AIGX genome
+
+on:
+  push:
+    paths:
+      - '**/*.aigx'
+      - 'tools/aigx-lint/**'
+  pull_request:
+    paths:
+      - '**/*.aigx'
+      - 'tools/aigx-lint/**'
+
+jobs:
+  validate:
+    name: aigx-lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Show aigx-lint version
+        run: python tools/aigx-lint/aigx_lint.py --version
+
+      - name: Validate example genome (stats)
+        run: python tools/aigx-lint/aigx_lint.py --stats --root examples/sourcing-app
+
+      - name: Validate minimal example genome (stats)
+        run: python tools/aigx-lint/aigx_lint.py --stats --root examples/minimal
+
+      - name: Validate starter template
+        run: python tools/aigx-lint/aigx_lint.py --stats --root templates/starter

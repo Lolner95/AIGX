@@ -1,6 +1,10 @@
-# AIGX Specification — v1.0
+# AIGX Specification — v1.1
 
-**Status:** Stable · **Version:** 1.0 · **License:** MIT · **Last updated:** 2026-06-15
+**Status:** Stable · **Version:** 1.1 · **License:** MIT · **Last updated:** 2026-06-15
+
+> **v1.1 adds [§8 Scaling](#8-scaling-to-large-repositories--monorepos)** — hierarchical (sharded)
+> genomes and per-file resolution — so the format bounds context cost on large repositories and monorepos.
+> v1.1 is backwards-compatible with v1.0 (a single root `.aigx/` is the one-package case).
 
 AIGX (AI Genome Exchange) is a context format for AI coding agents. This document is the **normative**
 definition. The key words MUST, SHOULD, and MAY are used per [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
@@ -196,10 +200,74 @@ entry and honor its `<forbid>` and `<check>`.
 
 ---
 
-## 7. Versioning
+## 8. Scaling to large repositories & monorepos
 
-This spec is **v1.0**. Backwards-incompatible changes increment the major version. Genomes MAY declare
-their target version via an optional `version="1.0"` attribute on the root of `protocol.aigx`.
+A single root `files.aigx` is correct for a small/mid project, but a flat index does not scale to a 50,000
+-file monorepo. AIGX v1.1 bounds context cost with two mechanisms.
 
-See [`examples/sourcing-app/`](examples/sourcing-app/) for a complete conforming genome and
-[`BENCHMARK.md`](BENCHMARK.md) for the evidence behind every "SHOULD" in this document.
+### 8.1 Hierarchical (sharded) genomes
+
+A repository MAY contain **multiple `.aigx/` directories** — one per package, workspace, or major subtree:
+
+```text
+monorepo/
+├── .aigx/                      # OPTIONAL root genome: only org-wide rules + the few cross-cutting files
+│   ├── protocol.aigx
+│   └── architecture.aigx       # rules that apply everywhere
+├── packages/
+│   ├── checkout/
+│   │   └── .aigx/
+│   │       ├── files.aigx      # indexes ONLY packages/checkout/**
+│   │       └── data.aigx       # rules local to checkout
+│   └── search/
+│       └── .aigx/
+│           └── files.aigx      # indexes ONLY packages/search/**
+```
+
+**Resolution rules (normative):**
+
+- A `files.aigx` entry's `path` is resolved **relative to the repository root** (so paths are unambiguous
+  across shards).
+- A genome at `<dir>/.aigx/` SHOULD index only files under `<dir>/`. It MUST NOT be required to list files
+  outside its subtree.
+- For a file being edited, the **applicable genome** is the nearest ancestor `.aigx/` directory; the root
+  `.aigx/` (if present) provides org-wide rules that apply in addition.
+- An agent editing within one package SHOULD load only that package's genome (plus the small root genome),
+  **not** sibling packages' genomes. Context is therefore bounded by the **working package**, not the repo.
+
+This makes the design *more* consistent with the locality principle ([principles L2](docs/principles.md)):
+context is addressed to the subtree the agent is actually in.
+
+### 8.2 Per-file resolution (constant-cost lookup)
+
+The boundary index is meant to be **looked up, not ingested**. A conforming tool SHOULD be able to return
+the single `<file>` entry for a given path, so an agent's context cost is **O(1) per edited file,
+independent of index size.** The bundled reference linter implements this:
+
+```bash
+aigx-lint --resolve src/features/meetings/bookMeeting.ts
+# prints exactly that file's <file> entry — nothing else
+```
+
+A 50,000-entry index thus costs an agent one resolution call (or one grep), not 50,000 lines. Editor and
+MCP integrations SHOULD expose this resolution so the agent never loads a whole index.
+
+### 8.3 Freshness at scale
+
+Because entries reference paths, a genome can drift as files move. A conforming repository SHOULD run a
+validator (e.g. the bundled `aigx-lint`) in CI so that a moved/renamed file **fails the build** until its
+entry is corrected — the same discipline used for `CODEOWNERS`, `tsconfig` path maps, and ESLint
+import-boundary rules. See [docs/limitations.md §2](docs/limitations.md#2-developer-experience--decoupled-docs-rot-the-moment-a-file-moves).
+
+> **Status:** hierarchical genomes and resolution are specified and tool-supported. They are **not yet
+> benchmarked at monorepo scale** — that's labeled future work, not a measured claim.
+
+## 9. Versioning
+
+This spec is **v1.1**. Backwards-incompatible changes increment the major version; backwards-compatible
+additions increment the minor. Genomes MAY declare their target version via an optional `version="1.1"`
+attribute on the root of `protocol.aigx`.
+
+See [`examples/sourcing-app/`](examples/sourcing-app/) for a complete conforming genome,
+[`BENCHMARK.md`](BENCHMARK.md) for the evidence behind every "SHOULD", and
+[`docs/limitations.md`](docs/limitations.md) for the scope and honest caveats.

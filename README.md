@@ -7,8 +7,8 @@
 **The open, benchmark-validated context format for AI coding agents.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-22c55e.svg)](LICENSE)
-[![Spec](https://img.shields.io/badge/spec-v1.0-3b82f6.svg)](SPEC.md)
-[![Benchmark](https://img.shields.io/badge/benchmark-%231%20on%20Haiku%204.5%20%26%20Sonnet%204.6%20(n%3D60)-f59e0b.svg)](BENCHMARK.md)
+[![Spec](https://img.shields.io/badge/spec-v1.1-3b82f6.svg)](SPEC.md)
+[![Benchmark](https://img.shields.io/badge/benchmark-controlled%20·%202%20models%20·%20n%3D60-f59e0b.svg)](BENCHMARK.md)
 [![Status](https://img.shields.io/badge/status-stable-22c55e.svg)](#status--roadmap)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-8b5cf6.svg)](CONTRIBUTING.md)
 
@@ -17,17 +17,24 @@
 ---
 
 **AIGX (AI Genome Exchange) is an open context format that stores a codebase's AI-agent rules in a
-centralized `.aigx/` directory with a per-file *boundary index* — and, to our knowledge, it is the only
-such format validated to win a controlled benchmark.** In head-to-head testing it ranked **#1 of every
-format tested — on mean score, pass@1, and hidden-test pass rate — on both Claude Haiku 4.5 and Claude
-Sonnet 4.6 at n=60**, and survived **five independent attempts to beat it**.
+centralized `.aigx/` directory with a per-file *boundary index*, while injecting nothing into your source
+code.** To our knowledge it is **the only context format ever validated in a controlled benchmark** — and
+in that benchmark it was the **only format that ranked first on *both* a weaker and a stronger model**
+(Claude Haiku 4.5 *and* Sonnet 4.6, n=60), while surviving **~24 deliberate attempts to beat it.**
+
+> **Straight about the statistics (up front, not in a footnote):** at n=60 the *top* formats are a
+> **statistical tie** on the composite mean — AIGX is not a blowout over good alternatives. Its real,
+> defensible edge is being the **most consistent across models, the most robust under challenge, the
+> simplest to author, and the only option that was measured at all.** A reproducible tie-at-the-top you can
+> write in an afternoon and that holds across model tiers beats a fragile, format-specific spike.
+> [Full scope, limitations & responses to critique →](docs/limitations.md)
 
 > **The one-liner:** A *genome* is the context that builds and operates an organism. **AIGX is the genome
 > of your codebase** — a portable, standard description of your rules, boundaries, and conventions that
 > *any* AI agent can read to inherit how your project works. Hand an agent your genome and it behaves
 > like a senior engineer who already knows the code.
 
-<sub>Spec v1.0 · MIT licensed · Tool-agnostic · Last updated 2026-06-15</sub>
+<sub>Spec v1.1 · MIT licensed · Tool-agnostic · Last updated 2026-06-15</sub>
 
 ---
 
@@ -66,17 +73,20 @@ that greps, edits, and runs tests. Scoring is deterministic and tamper-proof.
 | XML | 93.1 | 0.80 | 93.8% | 92.3 | 0.75 | 93.3% |
 | In-source headers | 94.6 | 0.80 | 96.1% | 92.4 | 0.67 | 90.2% |
 
-**AIGX is #1 on mean, pass@1, *and* hidden-test pass rate on both models.** It also survived a
-deliberate campaign to beat it — ~24 challenger variants across 6 research rounds (in-source guards,
-positional tricks, salience tiers, prose re-renderings, and combinations). **Every challenger failed.**
+AIGX ranks nominally first on mean, pass@1, *and* hidden-test pass on both models — **but the honest
+story is consistency, not margin.** Look down the columns: Markdown is excellent on Sonnet (95.1) yet
+near-last on Haiku (92.2); XML is the rough reverse. **AIGX is the only format that is first on *both*
+tiers** — the one you can trust not to fall over when you change models. And it survived a deliberate
+campaign to dethrone it: **~24 challenger variants across 6 research rounds** (in-source guards, positional
+tricks, salience tiers, prose re-renderings, and combinations) — **every one failed.**
 
 🔬 **Full method, models, sample sizes, raw data, and the challenger log:** **[BENCHMARK.md](BENCHMARK.md)**.
 
-> **An honest note (because this is research, not marketing):** at matched statistical power the *top*
-> context formats are close — they're a tight cluster, not a blowout. AIGX's real win is that it is the
-> **most robust, best-generalizing, and simplest-to-author** member of that cluster: it leads on every
-> primary metric on *both* model tiers, and it's the design that *kept winning* when we tried hardest to
-> break it. n=30 rankings are noise; AIGX is the one that holds up at n=60. [See the variance analysis →](BENCHMARK.md#why-n60)
+> **The statistics, stated plainly:** at n=60 the *top* formats are a **statistical tie** on the composite
+> mean — this is *not* a blowout, and we don't pretend otherwise. AIGX's defensible wins are **cross-model
+> consistency** (first on both tiers), **robustness** (beat every challenger), **simplicity**, and being
+> **the only format measured at all**. n=30 rankings are noise; AIGX is the one that still holds at n=60.
+> [Full honesty: scope, limitations & responses to every critique →](docs/limitations.md)
 
 ---
 
@@ -151,10 +161,12 @@ flowchart TD
     style G fill:#14532d,stroke:#22c55e,color:#bbf7d0
 ```
 
-The magic is **locality**. Agentic models read selectively — they grep, open the file they're editing,
-and rarely re-scan the whole rule doc. AIGX puts the binding constraint for *that file* one grep away (in
-`files.aigx`), instead of buried in a wall of prose. **Locality of the boundary — not document length,
-position, or repetition — is what drives discipline.** (We proved this; see [the principles](docs/principles.md).)
+The magic is **per-file addressability**. Agentic models read selectively — they grep, open the file
+they're editing, and rarely re-scan the whole rule doc. AIGX makes the binding constraint for *that file*
+retrievable in one lookup (in `files.aigx`), instead of buried in a wall of prose — *and* keeps it out of
+your source code. We tested all three placements (global prose, inline-in-source, and the addressed
+index); **the addressed index won, inlining lost.** It's not about document position or repetition — it's
+about targeting the rule to the file. (See [the principles](docs/principles.md#l2--per-file-addressability-beats-both-global-prose-and-in-source-inlining).)
 
 ---
 
@@ -225,7 +237,9 @@ Quick Start). It's designed to be **tool-agnostic** and to *layer on top of* wha
 | Aider | Add `.aigx/protocol.aigx` to read-only context |
 | Any LLM / custom agent | Paste the addendum from [the spec](SPEC.md#agent-addendum) |
 
-> Roadmap: official exporters (`aigx → AGENTS.md / CLAUDE.md / .mdc`) and a linter. [See roadmap](#status--roadmap).
+> Ships today: **[`aigx-lint`](tools/aigx-lint/)** — validate a genome against your repo in CI (so it
+> can't silently rot) and resolve any file's boundary in O(1) (so it scales to monorepos). Exporters to
+> `AGENTS.md`/`CLAUDE.md`/`.mdc` are on the [roadmap](#status--roadmap).
 
 ---
 
@@ -282,23 +296,27 @@ aigx/
 │   ├── concept.md       ← the genome philosophy, in depth
 │   ├── authoring-guide.md
 │   ├── principles.md    ← the 7 benchmark-backed laws
+│   ├── limitations.md   ← scope, honest caveats & point-by-point responses to critique
 │   └── faq.md
 ├── examples/
 │   └── sourcing-app/    ← a complete, real-world genome (.aigx/ + domain cards)
-└── templates/
-    └── starter/.aigx/   ← copy this into your repo to begin
+├── templates/
+│   └── starter/.aigx/   ← copy this into your repo to begin
+└── tools/
+    └── aigx-lint/       ← zero-dep validator + per-file resolver (CI-ready)
 ```
 
 ---
 
 ## Status & roadmap
 
-- ✅ **Spec v1.0** — stable, normative ([SPEC.md](SPEC.md)).
-- ✅ **Benchmark** — n=60 on two models, reproducible ([BENCHMARK.md](BENCHMARK.md)).
+- ✅ **Spec v1.1** — stable, normative; includes hierarchical/monorepo scaling ([SPEC.md](SPEC.md)).
+- ✅ **Benchmark** — n=60 on two models, reproducible, with honest [scope & limitations](docs/limitations.md).
+- ✅ **`aigx-lint`** — validate a genome against the repo (missing paths, dangling check-ids) + O(1)
+  per-file resolution. Zero-dependency. ([tools/aigx-lint](tools/aigx-lint/))
 - 🔜 Exporters: `aigx → AGENTS.md / CLAUDE.md / .cursor/rules`.
-- 🔜 `aigx-lint` — validate a genome (parity, dangling check-ids, missing entries).
 - 🔜 VS Code extension — hover a file → see its `.aigx` boundary.
-- 🔜 More worked examples (Python, Go, monorepos).
+- 🔜 Monorepo-scale benchmark (5k+ files) and more worked examples (Python, Go).
 
 Want to help? [CONTRIBUTING.md](CONTRIBUTING.md) · open an issue · star the repo to follow along.
 
@@ -314,7 +332,7 @@ sidebar; details in [CITATION.cff](CITATION.cff)).
   title  = {AIGX: AI Genome Exchange — A Benchmark-Validated Context Format for AI Coding Agents},
   author = {Parisotto, Grégory},
   year   = {2026},
-  url    = {https://github.com/USER/aigx},
+  url    = {https://github.com/Lolner95/AIGX},
   license = {MIT}
 }
 ```

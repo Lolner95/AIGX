@@ -75,7 +75,12 @@ forbidden import boundary (lower is better).
 | XML | 92.3 | 0.75 | 93.3% | 8% |
 | Markdown | 92.2 | 0.70 | 93.6% | 10% |
 
-**AIGX is #1 on mean, pass@1, *and* hidden-test pass rate on both models.**
+**AIGX ranks nominally first on mean, pass@1, and hidden-test pass on both models — but read this with
+§5 and §7.** At n=60 the top cluster (AIGX, Markdown, EXIFAI-v2) is a **statistical tie on the mean**; we
+do **not** claim a significant margin. What *is* distinctive is **cross-tier consistency**: AIGX is the
+**only** format first on *both* models. Markdown is excellent on Sonnet (95.1) but near-last on Haiku
+(92.2); XML is roughly the reverse. A format that wins one tier and falls on the other is a liability when
+you switch models; AIGX is the one that holds.
 
 ### Single-shot (Gemini, earlier phase)
 In single-shot full-rewrite mode, centralized AIGX beat XML **80.8 vs 74.9 (+5.9)**; pure-prose Markdown
@@ -144,6 +149,13 @@ optimum** — the design that *kept winning* under sustained, theory-driven atta
 We state these because a context format that *helps* should be adopted for the right reasons. AIGX earns
 adoption on robustness, per-file precision, clean source, and the fact that it's the only option here
 that was *measured at all.*
+
+> **A point reviewers raise: "won't bigger models / bigger context windows make this obsolete?"** Our data
+> says the opposite. Format spread *grew* from Haiku to Sonnet — the stronger model was *more*
+> format-sensitive — and larger context windows make "lost-in-the-middle" selective reading *worse*, which
+> raises the value of putting the constraint at the edit site. See the full treatment, plus responses to
+> the monorepo-scale, developer-experience, and "statistical-tie" objections, in
+> **[docs/limitations.md](docs/limitations.md)**.
 
 ---
 

@@ -16,14 +16,22 @@ explanation. Across ~24 challenger variants, the ones that added words lost.
 
 ---
 
-### L2 — Locality beats position
+### L2 — Per-file *addressability* beats both global prose and in-source inlining
 
-For an agent that greps and edits, **where in the codebase** a rule applies (the file being edited)
-matters enormously; **where in the document** the rule sits (top, middle, bottom, sorted) barely matters.
-"Lost in the Middle" positional tricks — restating critical rules at the top and bottom of the doc — did
-**not** help, because a selective reader never reads the doc top-to-bottom in the first place.
+This is the law most often misread, so state it precisely. We tested **three** placements of the same
+rule: (a) a global prose doc, far from the edit; (b) **inline in the source file** (true physical
+colocation); (c) a **per-file index** — central, but *addressed to the file being edited*. Result: **(b)
+inline lost** (parse-noise, especially on strong models), **(c) the addressed index won**, and (a) lacked
+targeting. Document *position* within a file (top/bottom/sorted, "Lost-in-the-Middle" tricks) did **not**
+matter — a selective reader never scans top-to-bottom.
 
-> **Apply it:** invest in *per-file targeting* (AIGX's index), not in document ordering or repetition.
+So the winning property is **not** "put the rule physically next to the code." It is: **make the rule
+*retrievable per edit-target*, while keeping it *out of* the source.** (This is *expression locality*, in
+the genome sense: a gene isn't copied into every cell — it lives centrally and is *expressed* where
+relevant. The per-file index is that expression map.)
+
+> **Apply it:** invest in *per-file addressing* (AIGX's index) — not in document ordering, not in
+> repetition, and not in inlining context into your source files.
 
 ---
 

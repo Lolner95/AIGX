@@ -1,0 +1,7 @@
+<aigx-protocol version="1.1">
+  <read-first>For EACH file you will edit, open .aigx/files.aigx and find its &lt;file&gt; entry.
+   Obey its &lt;forbid pri="CRIT"&gt; and verify every id in its &lt;check&gt; before finishing.</read-first>
+  <step n="1">Read the concern file(s) your task touches.</step>
+  <step n="2">Read .aigx/files.aigx for the per-file boundary of each file you edit.</step>
+  <step n="3">Minimal change, local blast radius. Run gates; verify &lt;check&gt; ids hold.</step>
+</aigx-protocol>

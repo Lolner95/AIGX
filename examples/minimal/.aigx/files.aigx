@@ -1,0 +1,9 @@
+<aigx-files>
+  <!-- Minimal example: one file entry with one forbid and one check.
+       Replace the path and content with your own codebase's hot files. -->
+  <file path="src/core/service.ts" domain="core">
+    <role>Main application service - the entry point for all business logic</role>
+    <forbid pri="CRIT">NEVER import from src/core/internal/* directly (ARCH-1)</forbid>
+    <check>ARCH-1</check>
+  </file>
+</aigx-files>

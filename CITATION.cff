@@ -6,11 +6,14 @@ abstract: >-
   in a centralized .aigx/ directory with a per-file boundary index, injecting nothing into source code. In
   a controlled benchmark holding the rule set constant and varying only the context format, AIGX ranked
   first on mean score, pass@1, and hidden-test pass rate on both Claude Haiku 4.5 and Claude Sonnet 4.6 at
-  n=60, and survived roughly two dozen deliberate attempts to beat it.
+  n=60, and survived roughly two dozen deliberate attempts to beat it. The top formats are statistically
+  tied on the composite mean; AIGX's defensible edge is cross-model consistency, robustness under
+  challenge, simplicity, and being the only format validated in a controlled benchmark.
 type: software
 authors:
   - family-names: Parisotto
     given-names: Grégory
+    email: gregory@feex.it
 keywords:
   - AI coding agents
   - context engineering
@@ -19,8 +22,20 @@ keywords:
   - agent instructions
   - code generation
   - developer tools
+  - benchmark
+  - agentic AI
+  - prompt engineering
+  - software development
 license: MIT
 version: "1.1"
 date-released: "2026-06-15"
 url: "https://github.com/Lolner95/AIGX"
 repository-code: "https://github.com/Lolner95/AIGX"
+preferred-citation:
+  type: software
+  title: "AIGX: AI Genome Exchange - A Benchmark-Validated Context Format for AI Coding Agents"
+  authors:
+    - family-names: Parisotto
+      given-names: Grégory
+  year: 2026
+  url: "https://github.com/Lolner95/AIGX"

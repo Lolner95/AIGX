@@ -188,7 +188,7 @@ parity-preserving projections.)
 
 ## 6. Conformance
 
-A directory is a **conforming AIGX v1.0 genome** if it has, at minimum:
+A directory is a **conforming AIGX genome** if it has, at minimum:
 
 1. a `.aigx/protocol.aigx` instructing per-file index lookup and `<check>` verification,
 2. at least one `.aigx/<concern>.aigx` with `<rule id="…">` rules, and

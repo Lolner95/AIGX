@@ -9,6 +9,7 @@
 - [ ] Tooling (exporter / linter / editor)
 - [ ] Docs
 - [ ] Benchmark / replication
+- [ ] Bug fix
 
 ## Checklist
 
@@ -17,3 +18,5 @@
       (see CONTRIBUTING.md - the bar for new structure is high and empirical).
 - [ ] If normative, I updated `SPEC.md` and the version note.
 - [ ] Examples still conform to the spec.
+- [ ] `aigx-lint --root .` passes on any example genome included or modified.
+- [ ] CHANGELOG.md updated under `[Unreleased]` if this is user-visible.

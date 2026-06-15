@@ -1,0 +1,18 @@
+# Normalize line endings to LF on check-in, convert to native on checkout
+* text=auto eol=lf
+
+# Explicitly set LF for text formats used in this repo
+*.md text eol=lf
+*.aigx text eol=lf
+*.txt text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.py text eol=lf
+*.cff text eol=lf
+
+# Explicitly mark binary files
+*.png binary
+*.jpg binary
+*.svg binary
+*.ico binary

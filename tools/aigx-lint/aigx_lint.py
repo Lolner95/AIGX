@@ -13,9 +13,12 @@ Usage:
   aigx_lint.py [--root DIR]                 # validate the genome(s) under DIR (default: cwd). Exit !=0 on errors.
   aigx_lint.py --resolve PATH [--root DIR]  # print just the <file> entry for PATH (constant-cost lookup)
   aigx_lint.py --stats [--root DIR]         # print a summary (genomes, rules, entries, forbids)
+  aigx_lint.py --version                    # print the tool version
 
 Exit codes: 0 = ok, 1 = validation errors, 2 = usage / not found.
 """
+
+__version__ = "1.1.0"
 import argparse
 import os
 import re
@@ -156,6 +159,7 @@ def main(argv=None):
     p.add_argument("--root", default=".", help="repository root (default: current directory)")
     p.add_argument("--resolve", metavar="PATH", help="print only the <file> entry for PATH (O(1) lookup)")
     p.add_argument("--stats", action="store_true", help="print a summary of the genome(s)")
+    p.add_argument("--version", action="version", version=f"aigx-lint {__version__}")
     args = p.parse_args(argv)
     root = os.path.abspath(args.root)
     if not os.path.isdir(root):

@@ -1,0 +1,13 @@
+<aigx-domain key="suppliers" path="src/features/suppliers">
+  <purpose>Supplier cards, badges, relevance scoring, contact mapping (internal).</purpose>
+  <public_api>src/features/suppliers/index.ts</public_api>
+  <test>logic unit tests only; no UI unit tests; card markup via journeys</test>
+  <blast>local feature only</blast>
+  <facts>
+    <fact>internal/ is private. The barrel exposes the narrowest needed surface; never re-export internal modules wholesale (ARCH-3).</fact>
+    <fact>Badge eligibility decisions live in logic/badges.ts. Components render what the logic layer returns and add no conditional logic of their own.</fact>
+    <fact>verified_importer in CMS rows: absent and null both mean NOT verified — coerce to false at the schema boundary (DATA-4).</fact>
+    <fact>marketing_copy is display-only prose, never a fact source (AI-4).</fact>
+    <fact>suppliers must not depend on the meetings feature (directly or via internal modules) — meetings depends on suppliers, and a back-edge creates a cycle that breaks the production build (ARCH-4).</fact>
+  </facts>
+</aigx-domain>

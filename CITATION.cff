@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use AIGX or its benchmark, please cite it as below."
+title: "AIGX: AI Genome Exchange — A Benchmark-Validated Context Format for AI Coding Agents"
+abstract: >-
+  AIGX (AI Genome Exchange) is an open context format for AI coding agents that stores a codebase's rules
+  in a centralized .aigx/ directory with a per-file boundary index, injecting nothing into source code. In
+  a controlled benchmark holding the rule set constant and varying only the context format, AIGX ranked
+  first on mean score, pass@1, and hidden-test pass rate on both Claude Haiku 4.5 and Claude Sonnet 4.6 at
+  n=60, and survived roughly two dozen deliberate attempts to beat it.
+type: software
+authors:
+  - family-names: Parisotto
+    given-names: Grégory
+keywords:
+  - AI coding agents
+  - context engineering
+  - context format
+  - LLM
+  - agent instructions
+  - code generation
+  - developer tools
+license: MIT
+version: "1.0"
+date-released: "2026-06-15"
+url: "https://github.com/USER/aigx"
+repository-code: "https://github.com/USER/aigx"

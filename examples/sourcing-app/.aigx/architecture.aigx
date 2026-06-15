@@ -1,0 +1,10 @@
+<aigx-architecture>
+  <rule id="ARCH-1">Feature-sliced design: each feature under src/features/&lt;name&gt; owns its components, logic and internal modules.</rule>
+  <rule id="ARCH-2">Every feature exposes ONE public API: its index.ts barrel. Importing any other path of a foreign feature (deep import) is forbidden.</rule>
+  <rule id="ARCH-3">Expose the narrowest possible surface through a barrel. Never re-export internal/ modules wholesale.</rule>
+  <rule id="ARCH-4">No circular dependencies between features. Cycles that look fine in dev break the production build.</rule>
+  <rule id="ARCH-5">Schema-first: define or update the Zod contract in src/shared/schemas before writing logic or UI that consumes it.</rule>
+  <rule id="ARCH-6">TypeScript strict mode; the `any` type is forbidden in any form (annotation, assertion, generic argument).</rule>
+  <rule id="ARCH-7">Database schema changes require a numbered SQL migration under src/backend/db/migrations. No migration, no schema change.</rule>
+  <rule id="ARCH-8">Keep blast radius minimal: touch only the feature you are working on plus its declared contracts. Cross-feature edits need explicit justification.</rule>
+</aigx-architecture>

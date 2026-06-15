@@ -1,0 +1,6 @@
+<aigx-auth>
+  <rule id="AUTH-1">No login wall at the entrance. A badge QR scan opens the event directory instantly for anonymous buyers. (Product decision 2026-02-20; supersedes the access model in docs/LEGACY_README.md.)</rule>
+  <rule id="AUTH-2">Auth is requested only at the first valuable action: saving a supplier, booking a meeting, writing a note.</rule>
+  <rule id="AUTH-3">Sign-in methods: Magic Link and SMS OTP. No passwords.</rule>
+  <rule id="AUTH-4">Pending intent survives the auth prompt: the supplier a buyer tapped to save or book is completed automatically right after sign-in, without a second tap.</rule>
+</aigx-auth>

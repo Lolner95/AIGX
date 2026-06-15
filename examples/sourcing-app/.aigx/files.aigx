@@ -1,0 +1,177 @@
+<aigx-files>
+  <file path="src/main.tsx" domain="events">
+    <role>App entry; everything statically imported here ships in first paint</role>
+    <gotcha pri="CRIT">never statically import the map engine or AI panel here; idle work via onAppIdle (PERF-5)</gotcha>
+    <check>PERF-1 PERF-4 PERF-5</check>
+  </file>
+  <file path="src/app/router.ts" domain="auth">
+    <role>Route loader for /e/:eventId (the QR-scan entry)</role>
+    <gotcha pri="CRIT">anonymous buyers must load + search instantly; gate VALUABLE ACTIONS only (AUTH-2), never the route</gotcha>
+    <check>AUTH-1 AUTH-2</check>
+  </file>
+  <file path="src/features/auth/authGate.ts" domain="auth">
+    <role>Access control: route gate (legacy) + action gate</role>
+    <gotcha pri="CRIT">AUTH-4: pending intent must survive the auth prompt and complete after sign-in</gotcha>
+    <check>AUTH-1 AUTH-2 AUTH-4</check>
+  </file>
+  <file path="src/features/suppliers/index.ts" domain="suppliers">
+    <role>Suppliers PUBLIC API (barrel)</role>
+    <forbid pri="CRIT">NEVER import re-exporting ./internal/* wholesale (ARCH-3)</forbid>
+    <gotcha pri="CRIT">expose the NARROWEST surface other features need; add one function rather than widening</gotcha>
+    <check>ARCH-2 ARCH-3 PERF-4</check>
+  </file>
+  <file path="src/features/suppliers/components/SupplierCard.tsx" domain="suppliers">
+    <role>First-screen supplier card</role>
+    <forbid pri="CRIT">NEVER import static import of MapPreview/maplibGl (drags 28KB into entry graph)</forbid>
+    <gotcha pri="CRIT">badge decisions come from logic/badges.ts only; no verified/badge conditionals in the component</gotcha>
+    <check>PERF-4</check>
+  </file>
+  <file path="src/features/suppliers/components/MapPreview.tsx" domain="suppliers">
+    <role>Floor-map preview (heavy)</role>
+    <gotcha pri="CRIT">keep createFloorMap/boothMarker wiring intact; never make this statically reachable from main.tsx</gotcha>
+  </file>
+  <file path="src/features/suppliers/logic/badges.ts" domain="suppliers">
+    <role>Badge eligibility (single source of truth)</role>
+    <gotcha pri="CRIT">absent AND null both mean false for flags like verified_importer (DATA-4); coerce at the schema</gotcha>
+    <check>DATA-4</check>
+  </file>
+  <file path="src/features/suppliers/internal/contactMapper.ts" domain="suppliers">
+    <role>INTERNAL contact mapper (private)</role>
+    <forbid pri="CRIT">NEVER import @/features/meetings (suppliers must NOT depend on meetings — cycle risk, ARCH-4)</forbid>
+    <gotcha pri="CRIT">this file sits on the cycle boundary; if booking needs contact data, expose it via the suppliers barrel, do not import meetings here</gotcha>
+    <check>ARCH-2 ARCH-4</check>
+  </file>
+  <file path="src/features/search/searchService.ts" domain="search">
+    <role>Per-event search + brand operator</role>
+    <gotcha pri="CRIT">never call getAllSuppliers from a buyer path; scope by event_id</gotcha>
+    <check>DATA-1 DATA-3</check>
+  </file>
+  <file path="src/features/search/normalize.ts" domain="search">
+    <role>Category normalization (pt-BR / es-MX / en)</role>
+    <gotcha pri="CRIT">the same physical category arrives in 3 languages; the table must cover all forms (incl. es-MX); be robust to case + surrounding whitespace</gotcha>
+  </file>
+  <file path="src/features/search/indexer.ts" domain="search">
+    <role>Builds the per-event search index</role>
+    <gotcha pri="CRIT">records without a normalized_category are EXCLUDED on purpose; fix the normalization table, never remove the exclusion</gotcha>
+  </file>
+  <file path="src/features/ai-recommendations/recommend.ts" domain="ai-recommendations">
+    <role>AI sourcing recommendations</role>
+    <gotcha pri="CRIT">marketing_copy is display-only — never a fact, never in a prompt, never in output (AI-4); enhancement is async, never block base results (AI-5)</gotcha>
+    <check>AI-1 AI-2 AI-3 AI-4 AI-5</check>
+  </file>
+  <file path="src/features/ai-recommendations/aiClient.ts" domain="ai-recommendations">
+    <role>LLM gateway stand-in (UNTRUSTED output)</role>
+    <gotcha pri="CRIT">completion text extrapolates claims; NEVER copy it into recommendation fields</gotcha>
+    <check>AI-2 AI-4</check>
+  </file>
+  <file path="src/features/meetings/bookMeeting.ts" domain="meetings">
+    <role>Book a meeting (validate slot + contact)</role>
+    <forbid pri="CRIT">NEVER import @/features/suppliers/internal/* (deep import = ARCH-2)</forbid>
+    <gotcha pri="CRIT">get contact_email from the suppliers PUBLIC api (e.g. getSupplierContactCard), never the internal mapper</gotcha>
+    <check>ARCH-2 ARCH-4 ARCH-5 DATA-2 TEST-1</check>
+  </file>
+  <file path="src/features/meetings/availability.ts" domain="meetings">
+    <role>Slot availability</role>
+    <gotcha pri="CRIT">nextFreeSlot must actually use its eventId; a Brazil booking must not block the Mexico supplier with the same id</gotcha>
+    <check>DATA-2</check>
+  </file>
+  <file path="src/features/offline/saveQueue.ts" domain="offline">
+    <role>Offline save queue (IndexedDB-backed)</role>
+    <gotcha pri="CRIT">dedupe on (event_id,supplier_id) (OFF-2); a FAILED/throwing flush keeps its entries queued (OFF-3); queue is event-scoped (OFF-5)</gotcha>
+    <check>OFF-2 OFF-3 OFF-5</check>
+  </file>
+  <file path="src/features/offline/swRegister.ts" domain="offline">
+    <role>Service-worker lifecycle</role>
+    <gotcha pri="CRIT">registration MUST be lazy via onAppIdle after first paint — never at module import time (OFF-4/PERF-5)</gotcha>
+    <check>OFF-4 PERF-5</check>
+  </file>
+  <file path="src/features/saved/savedSuppliers.ts" domain="saved">
+    <role>Save-supplier action (auth + api + offline)</role>
+    <gotcha pri="CRIT">anonymous tap returns authPromptShown + preserves pendingIntent (AUTH-4); offline tap routes through the queue (OFF-1)</gotcha>
+    <check>AUTH-4 OFF-1</check>
+  </file>
+  <file path="src/backend/repositories/supplierRepo.ts" domain="backend-repositories">
+    <role>Supplier data access (event-partitioned)</role>
+    <gotcha pri="CRIT">findByBrand must take eventId and scope to it — brands repeat across events</gotcha>
+    <check>DATA-1 DATA-2 DATA-3</check>
+  </file>
+  <file path="src/backend/repositories/meetingRepo.ts" domain="backend-repositories">
+    <role>Meeting data access</role>
+    <gotcha pri="CRIT">slot-taken checks must compare (event_id, supplier_id, slot)</gotcha>
+    <check>DATA-2</check>
+  </file>
+  <file path="src/backend/db/store.ts" domain="backend-repositories">
+    <role>In-memory DB (Postgres stand-in)</role>
+    <check>DATA-1</check>
+  </file>
+  <file path="src/backend/api/middleware/cacheHeaders.ts" domain="backend-api">
+    <role>Cache-Control policy middleware</role>
+    <gotcha pri="CRIT">ordering: the FINAL response must carry the right policy; later middleware must not clobber it (CACHE-5)</gotcha>
+    <check>CACHE-1 CACHE-2 CACHE-3 CACHE-4 CACHE-5</check>
+  </file>
+  <file path="src/backend/api/server.ts" domain="backend-api">
+    <role>Route table + dispatch + response middleware chain</role>
+    <gotcha pri="CRIT">applyCacheHeaders runs BEFORE sessionResponseMiddleware; keep the cache policy intact through the chain (CACHE-5); never delete routes</gotcha>
+    <check>CACHE-5</check>
+  </file>
+  <file path="src/shared/schemas/supplier.ts" domain="shared-schemas">
+    <role>Canonical supplier Zod contract</role>
+    <gotcha pri="CRIT">schema-first (ARCH-5): change the contract here before consumers; absent AND null coerce to documented defaults (DATA-4); no `any` (ARCH-6)</gotcha>
+    <check>ARCH-5 ARCH-6 DATA-4</check>
+  </file>
+  <file path="src/features/legacy/MegaSupplierPage.tsx" domain="legacy">
+    <role>QUARANTINED 800-line God-component</role>
+    <gotcha pri="CRIT">do not extend; if decomposing: schemas first, logic to its feature, dumb UI, async AI, auth at valuable actions only; its UI unit test predates TEST-2 and must not be copied</gotcha>
+    <check>TEST-2</check>
+  </file>
+  <file path="src/features/meetings/slotReservation.ts" domain="meetings">
+    <role>Atomic slot reservation under concurrency</role>
+    <gotcha pri="CRIT">reserve atomically — the check and the commit straddle an await (TOCTOU), so concurrent callers double-book; close that gap so exactly one of N concurrent reservers wins (ENG-1)</gotcha>
+    <check>ENG-1</check>
+  </file>
+  <file path="src/features/orders/pricing.ts" domain="orders">
+    <role>Order totals (money)</role>
+    <gotcha pri="CRIT">compute in INTEGER cents, never float dollars; apply whole-percent discount in integer math; round a fractional cent half-up once; return integer cents (ENG-2)</gotcha>
+    <check>ENG-2</check>
+  </file>
+  <file path="src/features/meetings/scheduling.ts" domain="meetings">
+    <role>Local→UTC slot conversion across time zones</role>
+    <gotcha pri="CRIT">derive the offset from the IANA tz database (Intl) for the actual instant; never hardcode a fixed offset — DST makes it wrong half the year (ENG-3)</gotcha>
+    <check>ENG-3</check>
+  </file>
+  <file path="src/features/search/textMatch.ts" domain="search">
+    <role>Accent-insensitive text matching</role>
+    <gotcha pri="CRIT">fold diacritics after Unicode normalization so 'eletrônicos'='eletronicos' and é(U+00E9)=e+U+0301; do not rely on naive toLowerCase for non-ASCII (ENG-4)</gotcha>
+    <check>ENG-4</check>
+  </file>
+  <file path="src/features/search/pagination.ts" domain="search">
+    <role>Cursor pagination over ranked results</role>
+    <gotcha pri="CRIT">page by a stable cursor over (score,id), never numeric offset — an insert between page fetches must not skip or duplicate a result (ENG-5)</gotcha>
+    <check>ENG-5</check>
+  </file>
+  <file path="src/features/meetings/idempotentBooking.ts" domain="meetings">
+    <role>Idempotent booking</role>
+    <gotcha pri="CRIT">honor the idempotency key: first call books + caches the confirmation; a retry with the same key returns it and creates no duplicate (ENG-6)</gotcha>
+    <check>ENG-6</check>
+  </file>
+  <file path="src/features/saved/buyerAccess.ts" domain="saved">
+    <role>Reading a buyer's saves (authz)</role>
+    <gotcha pri="CRIT">IDOR: never trust a caller-supplied buyer id to pick whose data is returned; scope to the authenticated buyer from the session (ENG-7)</gotcha>
+    <check>ENG-7</check>
+  </file>
+  <file path="src/features/search/filterParser.ts" domain="search">
+    <role>Advanced filter parser (untrusted input)</role>
+    <gotcha pri="CRIT">the clause regex has nested quantifiers — a ReDoS; parse in linear time with the same accepted tokens (ENG-8)</gotcha>
+    <check>ENG-8</check>
+  </file>
+  <file path="src/features/meetings/lifecycle.ts" domain="meetings">
+    <role>Meeting lifecycle state machine</role>
+    <gotcha pri="CRIT">enforce legal transitions; terminal states (cancelled, completed) are final; reject illegal transitions with an error, never accept any target (ENG-9)</gotcha>
+    <check>ENG-9</check>
+  </file>
+  <file path="src/shared/cache/boundedCache.ts" domain="shared">
+    <role>Bounded LRU cache</role>
+    <gotcha pri="CRIT">cap at maxEntries and evict least-recently-used; get() and set() both refresh recency; never grow unbounded (ENG-10)</gotcha>
+    <check>ENG-10</check>
+  </file>
+</aigx-files>

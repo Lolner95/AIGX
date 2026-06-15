@@ -1,0 +1,15 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Node / tooling (for future exporters/linters)
+node_modules/
+dist/
+*.log
+.env
+.env.*

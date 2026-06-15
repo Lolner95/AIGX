@@ -1,0 +1,10 @@
+<aigx-domain key="saved" path="src/features/saved">
+  <purpose>Save-supplier action wiring auth gate + API + offline queue.</purpose>
+  <public_api>src/features/saved/index.ts</public_api>
+  <test>logic unit tests + journey coverage</test>
+  <blast>local feature</blast>
+  <facts>
+    <fact>When the network is down the save action routes through the offline queue instead of failing (OFF-1).</fact>
+    <fact>Anonymous taps trigger the auth prompt AND preserve the tapped supplier as pending intent (AUTH-4).</fact>
+  </facts>
+</aigx-domain>

@@ -1,0 +1,11 @@
+<aigx-domain key="shared-schemas" path="src/shared/schemas">
+  <purpose>Zod contracts shared across features.</purpose>
+  <public_api>individual schema modules</public_api>
+  <test>unit tests for parsing edge cases (absent vs null, defaults, rejects)</test>
+  <blast>app-wide — every consumer</blast>
+  <facts>
+    <fact>Schema-first (ARCH-5): contracts change here before any consumer changes.</fact>
+    <fact>Absent and null are distinct in CMS exports and both must coerce to documented defaults (DATA-4).</fact>
+    <fact>DB schema changes (as opposed to parsing contracts) require a numbered SQL migration (ARCH-7).</fact>
+  </facts>
+</aigx-domain>

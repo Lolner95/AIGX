@@ -1,0 +1,8 @@
+<aigx-performance>
+  <rule id="PERF-1">Initial JS &lt;= 45KB gzipped. Enforced by `npm run check:bundle` (scripts/check_bundle.mjs); the budget is a failing gate, not advice.</rule>
+  <rule id="PERF-2">Initial CSS &lt;= 18KB gzipped.</rule>
+  <rule id="PERF-3">First screen on good 4G &lt; 1.2s; LCP P75 &lt; 2.0s; INP P75 &lt; 150ms.</rule>
+  <rule id="PERF-4">Heavy or below-the-fold code (maps, charts, AI panels) loads through dynamic import() after first paint, never in the static entry graph.</rule>
+  <rule id="PERF-5">Idle work registers through onAppIdle (src/app/bootstrap.ts), never at module import time.</rule>
+  <rule id="PERF-6">Never hide, weaken or bypass the bundle measurement to make a budget pass.</rule>
+</aigx-performance>

@@ -1,0 +1,11 @@
+<aigx-domain key="offline" path="src/features/offline">
+  <purpose>Offline save queue + service worker lifecycle.</purpose>
+  <public_api>src/features/offline/index.ts</public_api>
+  <test>logic unit tests + one journey test for offline save</test>
+  <blast>local feature + saved feature integration</blast>
+  <facts>
+    <fact>Queue dedupes on (event_id, supplier_id); failed flushes keep entries queued (OFF-2, OFF-3).</fact>
+    <fact>SW registration goes through onAppIdle after first paint (OFF-4, PERF-5).</fact>
+    <fact>The queue is event-scoped (OFF-5).</fact>
+  </facts>
+</aigx-domain>

@@ -1,0 +1,6 @@
+<aigx-product name="AI Genome Exchange">
+  <name>SourcingGPT Expo App (Eletrolar Brazil and LATAM Electronics Mexico)</name>
+  <standard>The app must feel instant on a 5-year-old Brazilian Android phone, inside a crowded expo hall, on unstable 4G. Speed is the brand.</standard>
+  <freshness>Product direction was reset in February 2026. Anything dated before 2026 (including docs/LEGACY_README.md) is historical and yields to the rules here.</freshness>
+  <stack>Vite + React 19 + TypeScript frontend; TypeScript API handlers under src/backend (HTTP boundary in production); in-memory Postgres stand-in under src/backend/db; Zod validation at every data boundary; Vitest for unit and journey (E2E) tests.</stack>
+</aigx-product>

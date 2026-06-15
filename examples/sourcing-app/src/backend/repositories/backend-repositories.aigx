@@ -1,0 +1,11 @@
+<aigx-domain key="backend-repositories" path="src/backend/repositories">
+  <purpose>Data access over the event-partitioned store.</purpose>
+  <public_api>repository modules (supplierRepo, meetingRepo, savesRepo)</public_api>
+  <test>unit tests per repository path</test>
+  <blast>every read path</blast>
+  <facts>
+    <fact>Every read leaving this layer is event-scoped (DATA-1). getAllSuppliers() exists for admin/import tooling only and must never serve a buyer-facing path.</fact>
+    <fact>Identity is (event_id, supplier_id) — ids repeat across events (DATA-2).</fact>
+    <fact>Brand lookups are per-event: brands repeat across events (DATA-3).</fact>
+  </facts>
+</aigx-domain>

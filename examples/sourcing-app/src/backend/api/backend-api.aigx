@@ -1,0 +1,11 @@
+<aigx-domain key="backend-api" path="src/backend/api">
+  <purpose>HTTP route handlers, dispatch, response middleware.</purpose>
+  <public_api>src/backend/api/server.ts (dispatch)</public_api>
+  <test>unit tests on handlers + middleware; journey tests through dispatch</test>
+  <blast>API consumers (frontend + cached CDN behavior)</blast>
+  <facts>
+    <fact>Cache classes: static immutable / public catalog SWR / auth no-store / user-private no-store (CACHE-1..4).</fact>
+    <fact>applyCacheHeaders runs before sessionResponseMiddleware in the response chain; the final response must still carry the correct cache policy (CACHE-5).</fact>
+    <fact>Catalog responses never include contact_email/contact_phone.</fact>
+  </facts>
+</aigx-domain>

@@ -1,0 +1,12 @@
+<aigx-domain key="ai-recommendations" path="src/features/ai-recommendations">
+  <purpose>AI sourcing assistant: structured supplier recommendations.</purpose>
+  <public_api>src/features/ai-recommendations/index.ts</public_api>
+  <test>logic unit tests, including hallucination-prevention tests</test>
+  <blast>local feature only</blast>
+  <facts>
+    <fact>Output is structured JSON per AI-1; prose blurbs are legacy.</fact>
+    <fact>match_reasons cite structured DB attributes only (AI-2); missing facts go to missing_info (AI-3).</fact>
+    <fact>The aiClient completion text is untrusted: it extrapolates claims from prose. Never copy model text into recommendation fields.</fact>
+    <fact>Enhancement is async — base search results must be available to the caller before any AI work starts (AI-5).</fact>
+  </facts>
+</aigx-domain>

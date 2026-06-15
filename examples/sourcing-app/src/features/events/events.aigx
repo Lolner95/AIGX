@@ -1,0 +1,10 @@
+<aigx-domain key="events" path="src/features/events">
+  <purpose>Registry of expo editions and their stable event_id slugs.</purpose>
+  <public_api>src/features/events/index.ts</public_api>
+  <test>logic unit tests only</test>
+  <blast>app-wide (every feature partitions on event_id)</blast>
+  <facts>
+    <fact>Event ids are stable slugs; QR codes printed on physical badges encode them — they can never change.</fact>
+    <fact>All data access in every feature partitions on event_id (DATA-1).</fact>
+  </facts>
+</aigx-domain>

@@ -1,0 +1,14 @@
+<!--
+  A per-concern rule file. Copy this pattern for each concern your codebase has:
+  data.aigx, auth.aigx, testing.aigx, performance.aigx, security.aigx, …
+  - Element name: aigx-<concern>
+  - One <rule> per rule, with a STABLE namespaced id (ARCH-1, DATA-1, …).
+  - One clear sentence per rule. No essays. Ids are referenced by <check> in files.aigx.
+-->
+<aigx-architecture>
+  <rule id="ARCH-1">TODO: your top architectural rule (e.g. feature-sliced; each feature owns its modules).</rule>
+  <rule id="ARCH-2">TODO: the import-boundary rule (e.g. import foreign features only through their public barrel; no deep imports).</rule>
+  <rule id="ARCH-3">TODO: a rule about public surface (e.g. expose the narrowest API; never re-export internals).</rule>
+  <rule id="ARCH-4">TODO: a rule about cycles / layering.</rule>
+  <rule id="ARCH-5">TODO: schema-first / contract-first, if applicable.</rule>
+</aigx-architecture>

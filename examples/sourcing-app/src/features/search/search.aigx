@@ -1,0 +1,11 @@
+<aigx-domain key="search" path="src/features/search">
+  <purpose>Per-event search index, category normalization, query scoring.</purpose>
+  <public_api>src/features/search/index.ts</public_api>
+  <test>logic unit tests only</test>
+  <blast>local feature + repository contracts</blast>
+  <facts>
+    <fact>Every search path is event-scoped, including operator queries like brand: (DATA-1, DATA-3).</fact>
+    <fact>Category normalization must cover the Portuguese, Spanish and English forms event ops actually type — the same physical category arrives in all three languages across our shows.</fact>
+    <fact>Records without a normalized_category are intentionally excluded from the index (they would surface in every category filter). The correct fix for missing coverage is always the normalization table, never removing the exclusion.</fact>
+  </facts>
+</aigx-domain>

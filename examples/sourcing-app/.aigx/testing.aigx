@@ -1,0 +1,7 @@
+<aigx-testing>
+  <rule id="TEST-1">Test-first: write or update the failing test before the implementation.</rule>
+  <rule id="TEST-2">No UI unit tests. Component markup is never asserted in unit tests.</rule>
+  <rule id="TEST-3">UI behavior is covered by journey (E2E) tests under e2e/, driven through route loaders and the API dispatch surface.</rule>
+  <rule id="TEST-4">Logic (schemas, services, repositories, queues) is covered by unit tests under tests/ or colocated *.spec.ts.</rule>
+  <rule id="TEST-5">Never delete or weaken an existing test to make a change pass.</rule>
+</aigx-testing>

@@ -1,0 +1,7 @@
+<aigx-offline>
+  <rule id="OFF-1">Saving works offline: the action lands in an IndexedDB-backed queue and syncs when the connection returns.</rule>
+  <rule id="OFF-2">The queue deduplicates on (event_id, supplier_id). Repeated taps never produce duplicate saves or duplicate meetings.</rule>
+  <rule id="OFF-3">A failed sync keeps its entries queued for a later retry. Entries are never dropped.</rule>
+  <rule id="OFF-4">Service worker registration is lazy (after first paint via onAppIdle), never at module import time.</rule>
+  <rule id="OFF-5">The offline queue is event-scoped like every other data structure.</rule>
+</aigx-offline>

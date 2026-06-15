@@ -68,3 +68,19 @@ all welcome. Independent replication of the benchmark is especially welcome.
 ### Where do I start?
 The [Quick start](../README.md#quick-start-under-60-seconds) (copy the starter, fill in `files.aigx`, add
 one line to your agent config), then the [authoring guide](authoring-guide.md).
+
+### How do I migrate from an existing CLAUDE.md or AGENTS.md?
+Keep your existing file - it still works. Add a `.aigx/` directory alongside it and point agents at both.
+The quickest migration: paste your most critical rules into `.aigx/architecture.aigx` as `<rule id="…">`
+entries, then build `files.aigx` one file at a time as you touch code. See
+[docs/migration.md](migration.md) for a step-by-step guide.
+
+### What happens if I rename a file that has an entry in `files.aigx`?
+The entry's `path` will no longer exist on disk, and `aigx-lint --root .` will fail. That's intentional:
+the lint failure tells you *exactly* which entry to update. Wire `aigx-lint` into your CI or a pre-commit
+hook so the mismatch is caught immediately rather than silently rotting.
+
+### Can I run `aigx-lint` in GitHub Actions?
+Yes - it's a single zero-dependency Python script. See the CI snippet in the
+[aigx-lint README](../tools/aigx-lint/README.md). It also works in GitLab CI, Bitbucket Pipelines, and
+any environment with Python 3.8+.

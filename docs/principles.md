@@ -4,6 +4,10 @@ Every principle below is not an opinion - it's a finding from the [benchmark](..
 varied one thing at a time and measured the effect on autonomous coding agents (Claude Haiku 4.5 and
 Sonnet 4.6). They generalize beyond AIGX: they're useful whenever you write context for an AI agent.
 
+Each principle has a **Apply it:** line - a one-line directive you can act on immediately without reading
+the full benchmark. The synthesis of all seven is the AIGX design itself: see the
+[Synthesis section](#the-synthesis-which-is-aigx) at the bottom.
+
 ---
 
 ### L1 - Short, scarce, direct wins

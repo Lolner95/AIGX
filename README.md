@@ -321,11 +321,13 @@ aigx/
 - ✅ **Benchmark** - n=60 on two models, reproducible, with honest [scope & limitations](docs/limitations.md).
 - ✅ **`aigx-lint`** - validate a genome against the repo (missing paths, dangling check-ids) + O(1)
   per-file resolution. Zero-dependency. ([tools/aigx-lint](tools/aigx-lint/))
-- 🔜 Exporters: `aigx → AGENTS.md / CLAUDE.md / .cursor/rules`.
+- ✅ **Minimal example** - smallest valid genome for reference and tooling tests ([examples/minimal](examples/minimal/)).
+- ✅ **Migration guide** - step-by-step path from a flat `AGENTS.md`/`CLAUDE.md` ([docs/migration.md](docs/migration.md)).
+- 🔜 Exporters: `aigx → AGENTS.md / CLAUDE.md / .cursor/rules` - see [roadmap](docs/roadmap.md).
 - 🔜 VS Code extension - hover a file → see its `.aigx` boundary.
 - 🔜 Monorepo-scale benchmark (5k+ files) and more worked examples (Python, Go).
 
-Want to help? [CONTRIBUTING.md](CONTRIBUTING.md) · open an issue · star the repo to follow along.
+Want to help? [CONTRIBUTING.md](CONTRIBUTING.md) · [open an issue](https://github.com/Lolner95/AIGX/issues) · star the repo to follow along.
 
 ---
 

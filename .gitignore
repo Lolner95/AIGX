@@ -7,9 +7,13 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 
-# Node / tooling (for future exporters/linters)
+# Node / tooling
 node_modules/
 dist/
 *.log
 .env
 .env.*
+
+# npm publish artifacts
+*.tgz
+package-lock.json

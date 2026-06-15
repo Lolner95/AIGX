@@ -1,0 +1,16 @@
+<aigx-engineering>
+  <!-- Hard-correctness rules - things that cause subtle, hard-to-detect bugs.
+       Add entries specific to your stack. The ten below are universal starting points
+       drawn from the sourcing-app benchmark; keep only the ones that apply. -->
+
+  <rule id="ENG-1">TOCTOU: any check-then-act on shared state must be atomic; re-validate inside the lock/transaction.</rule>
+  <rule id="ENG-2">Money is integer cents (or the smallest unit of the currency); floating-point arithmetic on monetary values is forbidden.</rule>
+  <rule id="ENG-3">All time zone conversions use IANA timezone identifiers; UTC offsets as strings are forbidden.</rule>
+  <rule id="ENG-4">Text comparison and search: normalize to NFC Unicode and fold diacritics before matching.</rule>
+  <rule id="ENG-5">Pagination cursors must be stable across writes; offset-based pagination is forbidden for mutable collections.</rule>
+  <rule id="ENG-6">Mutating operations must accept and honor an idempotency key; re-sending the same key returns the original result, not a duplicate.</rule>
+  <rule id="ENG-7">Authorization checks must scope every query to the authenticated principal; cross-tenant data access is forbidden.</rule>
+  <rule id="ENG-8">User-supplied strings used in regex must be validated for catastrophic backtracking (ReDoS); use linear-time alternatives where possible.</rule>
+  <rule id="ENG-9">State machines: every transition must be explicitly enumerated; implicit fallthrough to a default state is forbidden.</rule>
+  <rule id="ENG-10">In-memory caches must have an explicit size cap and an eviction policy; unbounded caches are forbidden.</rule>
+</aigx-engineering>

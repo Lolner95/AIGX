@@ -1,0 +1,38 @@
+{
+  "name": "create-aigx",
+  "version": "1.0.0",
+  "description": "Scaffold an AIGX genome into your project in under 60 seconds",
+  "type": "module",
+  "bin": {
+    "create-aigx": "./bin/create-aigx.mjs"
+  },
+  "files": [
+    "bin",
+    "template"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "aigx",
+    "ai",
+    "agents",
+    "context",
+    "genome",
+    "claude",
+    "cursor",
+    "copilot",
+    "aider",
+    "scaffold",
+    "create"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lolner95/AIGX.git"
+  },
+  "homepage": "https://github.com/Lolner95/AIGX",
+  "bugs": {
+    "url": "https://github.com/Lolner95/AIGX/issues"
+  }
+}

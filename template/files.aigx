@@ -1,0 +1,29 @@
+<!--
+  THE KEYSTONE: the per-file boundary index.
+  One <file> entry per file an agent is LIKELY TO EDIT (not every file in the repo).
+
+  Fields per entry:
+    path   (attr, required)  repo-relative path
+    domain (attr, optional)  the feature/domain this file belongs to
+    <role>     one line: what the file is for
+    <forbid>   a hard NEVER (usually a forbidden import). USE SPARINGLY - only files with a
+               real boundary get one. Scarcity is the point.
+    <gotcha>   the SINGLE worst pitfall for this file (not a list)
+    <check>    space-separated rule-ids to verify before finishing (must resolve to real rules)
+
+  Keep it lean. Rich indexes were tested and did not help. See docs/authoring-guide.md.
+-->
+<aigx-files>
+  <file path="TODO/path/to/important_file.ext" domain="TODO-domain">
+    <role>TODO: one line - what this file does</role>
+    <forbid pri="CRIT">TODO (only if there's a real boundary): NEVER import …</forbid>
+    <gotcha pri="CRIT">TODO: the single worst pitfall when editing this file</gotcha>
+    <check>ARCH-2 TODO-OTHER-IDS</check>
+  </file>
+
+  <file path="TODO/path/to/another_file.ext" domain="TODO-domain">
+    <role>TODO</role>
+    <gotcha pri="CRIT">TODO</gotcha>
+    <check>TODO-IDS</check>
+  </file>
+</aigx-files>

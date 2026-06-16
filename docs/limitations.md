@@ -169,3 +169,108 @@ and the contradiction dissolves. ([principles.md](principles.md) has been rewrit
 We publish these so AIGX is adopted for the right reasons. It earns adoption on **per-file precision, clean
 source, tool-checkable freshness, cross-model robustness, and the simple fact that it's the only option
 here that was measured** - not on a margin we don't have. [See the full benchmark →](../BENCHMARK.md)
+
+---
+
+## 6. Developer critique responses — and what we shipped
+
+The following three objections came from developers who integrate with AI agents daily. Each one is valid;
+each one now has a concrete answer in the toolchain.
+
+---
+
+### 6.1 Stale sidecar files — "the agent renames a file; the genome instantly lies"
+
+**Objection (paraphrased):** AIGX's decoupled index is a maintenance hazard. The moment a developer renames
+`bookMeeting.ts` to `scheduleMeeting.ts`, the genome is wrong. Discipline alone won't hold — developers
+don't think about the genome when they rename files.
+
+**The solution we shipped:** [`aigx-sync`](../tools/aigx-sync/) — a zero-dependency git pre-commit hook.
+
+- Reads staged renames via `git diff --staged --diff-filter=R`
+- Rewrites every matching `path="..."` attribute in every `files.aigx`
+- Re-stages the patched file automatically
+
+The genome update lands **in the same commit as the rename**. The developer does nothing extra. Drift
+becomes physically impossible at the commit boundary rather than relying on documentation conventions.
+
+Install in one step:
+```bash
+cp tools/aigx-sync/aigx_sync.py .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+```
+
+`aigx-sync` handles *prevention*; `aigx-lint` handles *detection* in CI. Use both.
+
+---
+
+### 6.2 Opaque rule ids — "`ARCH-4` means nothing to a future reader"
+
+**Objection (paraphrased):** When a `<check>` entry says `ARCH-2 ARCH-4 DATA-3`, neither the developer
+reading a diff nor the agent reading the genome understands what those ids mean without looking them up. The
+ids act as placeholders, not communication.
+
+**The solution we shipped:** semantic rule id slugs (SPEC.md §2, updated).
+
+- Both styles are now valid: `ARCH-2` (numeric) and `ARCH-no-deep-imports` (semantic)
+- Semantic slugs are **recommended for new genomes**
+- Backward-compatible: numeric ids in existing genomes are still valid and need no migration
+
+A `<check>` entry with semantic ids is self-documenting:
+```xml
+<!-- before -->
+<check>ARCH-2 ARCH-6 DATA-3 TEST-1</check>
+
+<!-- after — intent is readable without cross-reference -->
+<check>ARCH-no-deep-imports ARCH-ts-strict DATA-integer-cents TEST-failing-first</check>
+```
+
+The `aigx-lint` regex already captures any id format — no tool changes needed.
+
+---
+
+### 6.3 N+1 context loading — "under time pressure, the agent skips the reads"
+
+**Objection (paraphrased):** The agent addendum says "go read the genome." Under latency pressure, some
+agents skip one or more reads and the constraints never land in the context window. Behavioral reliability
+varies between models and prompts; you can't depend on the agent to faithfully execute a 3-step reading
+sequence before every edit.
+
+**The solution we shipped:** JIT (Just-In-Time) Context Hydration — documented in [`docs/jit-hydration.md`](jit-hydration.md).
+
+The pattern flips responsibility: the *environment* resolves the genome entry for the file being edited and
+injects it directly into the system prompt *before* inference runs. The agent receives the constraint
+pre-loaded; it doesn't need to earn it through sequential tool calls.
+
+Three integration patterns, in order of recommended adoption:
+
+1. **MCP tool** — expose `aigx-lint --resolve <path>` as an MCP tool; the IDE calls it automatically when
+   the agent opens a file. Works with Claude Code, Cursor, any MCP-capable runtime.
+2. **Pre-prompt injection** — for CLI wrappers and CI pipelines: resolve the boundary before constructing
+   the LLM request, splice it into the system prompt. Zero agent cooperation required.
+3. **Editor extension** — planned VS Code extension (see [roadmap](roadmap.md)) handles this natively.
+
+The core primitive — `python tools/aigx-lint/aigx_lint.py --resolve src/foo.ts` — returns the single `<file>`
+entry in O(1). The agent addendum approach (§4) remains valid and simpler; JIT is for teams who confirm
+their agent skips reads under pressure.
+
+---
+
+### 6.4 Agent self-maintenance — "agents don't know they should update the genome"
+
+**Objection (implied by the above):** Even if the genome is set up correctly, an agent editing the codebase
+has no instruction to keep the genome current. It will rename files without updating `files.aigx`, add new
+boundary files without adding entries, and let rule text drift from reality.
+
+**The solution we shipped:** [`agent.aigx`](../templates/starter/.aigx/agent.aigx) — a rule file for the agent itself.
+
+Seven `AGENT-*` rules that tell an AI agent how to be a genome steward:
+- Read the `<file>` entry before editing any file (`AGENT-read-before-edit`)
+- Update `files.aigx` in the same change-set as a rename (`AGENT-sync-on-rename`)
+- Add an entry for new boundary files (`AGENT-add-new-entry`)
+- Never rename or delete a rule id (`AGENT-stable-ids`)
+- Update rule text when code changes make it wrong (`AGENT-update-rule-text`)
+- Verify paths and ids after task completion (`AGENT-verify-after-task`)
+- No speculative entries or rules (`AGENT-no-bloat`)
+
+`create-aigx` scaffolds this file automatically. For existing genomes: copy `templates/starter/.aigx/agent.aigx`
+into your `.aigx/` folder, then add a reference to it in your agent addendum line.

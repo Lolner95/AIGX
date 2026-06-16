@@ -5,6 +5,36 @@ All notable changes to the AIGX specification and repository are documented here
 
 ## [Unreleased]
 
+### Spec
+- **§2 Semantic rule ids** ([SPEC.md](SPEC.md#2-file-naming-and-rule-ids)): ids can now be
+  `PREFIX-slug` (e.g. `ARCH-no-deep-imports`) in addition to `PREFIX-N`. Semantic slugs are
+  recommended for new genomes — `<check>` lists become self-documenting. Fully backward-compatible.
+- **§10 JIT Context Hydration** ([SPEC.md](SPEC.md)): documented MCP tool, pre-prompt injection, and
+  editor-extension patterns for pre-loading genome entries before inference. Normative recommendation,
+  not a required format change.
+
+### Tooling
+- **`aigx-sync`** ([tools/aigx-sync](tools/aigx-sync/)): zero-dependency git pre-commit hook that
+  auto-patches `files.aigx` path attributes when source files are renamed or moved. Drift becomes
+  physically impossible at the commit boundary.
+- **`create-aigx`** npm package: `npx create-aigx` scaffolds a starter genome (protocol, product,
+  architecture, engineering, files, agent) into the current directory. Zero dependencies, Node 18+.
+
+### Templates
+- **`agent.aigx`** ([templates/starter/.aigx/agent.aigx](templates/starter/.aigx/agent.aigx)):
+  seven `AGENT-*` rules that teach an AI agent to be a genome steward — sync renames, add entries for
+  new files, keep rule text current, verify after task, avoid speculative bloat. Scaffolded by
+  `create-aigx` automatically.
+
+### Docs
+- **[docs/jit-hydration.md](docs/jit-hydration.md)**: full JIT hydration guide with MCP tool
+  definition, Python pre-prompt injection code, editor extension pattern, and when NOT to use it.
+- **[docs/limitations.md](docs/limitations.md)** §6 expanded: point-by-point responses to the
+  three developer critiques (stale sidecars → `aigx-sync`, opaque ids → semantic slugs, N+1 reads →
+  JIT hydration) plus `agent.aigx` for genome self-maintenance.
+- **[docs/authoring-guide.md](docs/authoring-guide.md)**: Step 1 updated with semantic id guidance
+  and a numeric-vs-semantic comparison table.
+
 ### Planned
 - Exporters: `aigx → AGENTS.md / CLAUDE.md / .cursor/rules`
 - VS Code extension - hover a source file, see its `.aigx` boundary inline

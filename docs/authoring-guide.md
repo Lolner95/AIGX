@@ -19,13 +19,33 @@ Create one file per concern in `.aigx/`: `architecture.aigx`, `data.aigx`, `auth
 
 ```xml
 <aigx-architecture>
-  <rule id="ARCH-1">Feature-sliced design: each feature owns its components, logic, internal modules.</rule>
-  <rule id="ARCH-2">Every feature exposes ONE public API: its index barrel. Deep imports are forbidden.</rule>
-  <rule id="ARCH-6">TypeScript strict; `any` is forbidden in any form.</rule>
+  <rule id="ARCH-no-deep-imports">Every feature exposes ONE public API: its index barrel. Deep imports are forbidden.</rule>
+  <rule id="ARCH-ts-strict">TypeScript strict; `any` is forbidden in any form.</rule>
+  <rule id="ARCH-feature-slice">Feature-sliced design: each feature owns its components, logic, internal modules.</rule>
 </aigx-architecture>
 ```
 
-**Do:** one clear sentence per rule. Stable, namespaced ids (`ARCH-*`, `DATA-*`).
+**Rule id format — numeric vs. semantic:**
+
+AIGX supports two id styles; both are valid and you can mix them freely in one genome:
+
+| Style | Example | When to use |
+|---|---|---|
+| `PREFIX-N` (numeric) | `ARCH-2` | Migrating an existing genome; short sequential rules |
+| `PREFIX-slug` (semantic) | `ARCH-no-deep-imports` | New genomes (recommended); makes `<check>` lists self-documenting |
+
+Semantic ids make `<check>` entries in `files.aigx` readable at a glance:
+```xml
+<!-- check list with numeric ids -->
+<check>ARCH-2 ARCH-6 DATA-3 TEST-1</check>
+
+<!-- same rules with semantic ids -->
+<check>ARCH-no-deep-imports ARCH-ts-strict DATA-integer-cents TEST-failing-first</check>
+```
+
+**The only invariant:** once assigned, an id is permanent. You can update the rule *text* in-place; you may not rename or delete the id (see [agent.aigx](.aigx/agent.aigx) rule `AGENT-stable-ids`).
+
+**Do:** one clear sentence per rule. Stable, namespaced ids. Semantic slugs for new rules.
 **Don't:** essays, rationale paragraphs, or duplicating a rule across concerns.
 
 ## Step 2 - Build the per-file boundary index (the keystone)

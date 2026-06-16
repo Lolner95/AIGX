@@ -1,5 +1,12 @@
 # Aider configuration for AIGX-enabled repos
-# Add .aigx/protocol.aigx as read-only context so Aider loads the genome on every session.
+#
+# Loads .aigx/protocol.aigx and .aigx/agent.aigx as read-only context on every session.
+# This gives Aider the complete reading protocol and self-maintenance rules without
+# requiring you to paste them each time.
+#
+# The reading protocol tells Aider to look up each file it edits in .aigx/files.aigx
+# and obey the <forbid>, <gotcha>, and <check> entries it finds there.
+#
 # See: https://aider.chat/docs/config/aider_conf.html
 
 read:

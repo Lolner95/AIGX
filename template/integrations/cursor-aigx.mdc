@@ -1,31 +1,82 @@
 ---
-description: AIGX genome context — load the per-file boundary before any edit
+description: AIGX genome — complete agent protocol for this codebase
 globs:
 alwaysApply: true
 ---
 
-This repository uses **AIGX** (AI Genome Exchange) for structured agent context. The genome lives in `.aigx/` — not in your source files.
+# AIGX — AI Genome Exchange
 
-## Before editing any file
+This repo stores its agent rules in `.aigx/` — a structured genome that describes every important file's purpose, forbidden imports, and worst gotchas. **You do not need to guess conventions; they are in the genome.**
 
-1. Open `.aigx/files.aigx` — find the `<file path="...">` entry for the file you're about to edit
-2. Read its `<role>` to understand the file's job
-3. Obey its `<forbid pri="CRIT">` — hard constraint, never violate
-4. Heed its `<gotcha>` — the single most important pitfall for this file
-5. Verify every rule id in its `<check>` before finishing
+---
 
-Read `.aigx/protocol.aigx` for the full protocol. Read the concern files (`.aigx/architecture.aigx`, `.aigx/data.aigx`, etc.) that the check ids reference.
+## Before touching any file — look it up
 
-## Keeping the genome current
+Find the file in `.aigx/files.aigx`. Every file an agent is likely to edit has a `<file path="...">` entry:
 
-See `.aigx/agent.aigx` for the complete self-maintenance rules. Key rules:
+```xml
+<file path="src/features/auth/login.ts" domain="auth">
+  <role>Handle login — validate credentials and issue a session</role>
+  <forbid pri="CRIT">NEVER read from another tenant's session store</forbid>
+  <gotcha>token expiry is checked at read-time, not issue-time</gotcha>
+  <check>ARCH-no-deep-imports ENG-tenant-scope</check>
+</file>
+```
 
-- **Rename a file?** Update its `path="..."` in `files.aigx` in the same change-set — never as a follow-up
-- **Create a new boundary file?** Add a `<file>` entry in `files.aigx` with at least `<role>` and one `<check>` id
-- **Rule ids are permanent** — never rename them; only update the text in-place
+Read it, then:
 
-## Validate
+| Field | What it means | How to act |
+|---|---|---|
+| `<role>` | What this file is for | Understand it before writing a line |
+| `<forbid pri="CRIT">` | Hard constraint — a NEVER | Never violate it. Not "try not to" — never. |
+| `<gotcha>` | The single worst pitfall here | Read it twice |
+| `<check>` | Rule ids to verify before finishing | Look each up in its concern file |
+
+---
+
+## The genome structure
+
+```
+.aigx/
+  protocol.aigx      ← full reading sequence
+  product.aigx       ← product context + which older docs are stale (freshness clause)
+  architecture.aigx  ← ARCH-* rules
+  data.aigx          ← DATA-* rules   (if present)
+  auth.aigx          ← AUTH-* rules   (if present)
+  engineering.aigx   ← ENG-* hard-correctness invariants
+  files.aigx         ← ★ per-file boundary index (the keystone — look files up here)
+  agent.aigx         ← self-maintenance rules for agents
+  [more].aigx        ← any other concern (testing, performance, security, …)
+```
+
+Check ids in `<check>` resolve to rules in concern files. `ARCH-no-deep-imports` → look in `architecture.aigx` for `<rule id="ARCH-no-deep-imports">`. Read that rule before writing code.
+
+---
+
+## Keeping the genome current — non-negotiable
+
+The genome is only useful if it stays true to the codebase.
+
+**When you rename or move a file** that has a `files.aigx` entry: update `path="..."` in the **same change-set**. A rename that doesn't update the genome is an incomplete change.
+
+**When you create a new source file** agents will edit: add a `<file>` entry in `files.aigx`. Minimum: `<role>` + one `<check>` id. Never leave a new boundary file undocumented.
+
+**Rule ids are permanent.** `ARCH-no-deep-imports`, `ENG-2`, etc. — never rename or delete them. If a rule's meaning changes, update the text in-place. The id stays forever.
+
+**When your code change makes a rule incorrect:** update the rule text in the same change-set. The genome must describe reality, not history.
+
+**After any task that moves, deletes, or adds files:** confirm every `<file path>` in `files.aigx` still exists on disk and every `<check>` id still resolves to a real rule.
+
+**Never add entries speculatively.** One entry per file agents actually edit. One rule per real constraint. Lean genomes outperformed rich ones in the benchmark.
+
+---
+
+## Validate at any time
 
 ```bash
+# if aigx-lint is installed locally:
 python tools/aigx-lint/aigx_lint.py --root .
+
+# no local install needed:
+curl -sSfL https://raw.githubusercontent.com/Lolner95/AIGX/main/tools/aigx-lint/aigx_lint.py | python - --root .
 ```

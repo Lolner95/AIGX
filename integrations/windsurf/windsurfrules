@@ -1,24 +1,53 @@
-# AIGX Context
+# AIGX — AI Genome Exchange
 
-This repository uses AIGX (AI Genome Exchange) — a per-file context format for AI coding agents. The genome lives in `.aigx/`.
+This repository stores its AI agent rules in `.aigx/` — a structured genome with a per-file boundary index. You do not need to guess conventions; they are in the genome.
 
-## Read protocol
+## Before editing any file — look it up
 
-For every file you will edit:
-1. Find its `<file path="...">` entry in `.aigx/files.aigx`
-2. Read its `<role>` — what the file does
-3. Obey `<forbid pri="CRIT">` — hard constraint, never violate
-4. Heed `<gotcha>` — the single worst pitfall here
-5. Verify every `<check>` id before finishing
+Open `.aigx/files.aigx` and find the `<file path="...">` entry for the file you are about to edit:
 
-Full protocol in `.aigx/protocol.aigx`.
+```xml
+<file path="src/features/auth/login.ts" domain="auth">
+  <role>Handle login — validate credentials and issue a session</role>
+  <forbid pri="CRIT">NEVER read from another tenant's session store</forbid>
+  <gotcha>token expiry is checked at read-time, not issue-time</gotcha>
+  <check>ARCH-no-deep-imports ENG-tenant-scope</check>
+</file>
+```
+
+- `<role>` — understand what this file is for before writing a line
+- `<forbid pri="CRIT">` — hard constraint, never violate it, no exceptions
+- `<gotcha>` — the single worst pitfall here; read it twice
+- `<check>` — rule ids to verify before finishing; look each up in its concern file
+
+## Genome structure
+
+```
+.aigx/
+  protocol.aigx      ← full reading sequence
+  product.aigx       ← product context + freshness clause (overrides stale docs)
+  architecture.aigx  ← ARCH-* rules
+  engineering.aigx   ← ENG-* hard-correctness invariants
+  files.aigx         ← ★ per-file boundary index — look files up here
+  agent.aigx         ← self-maintenance rules
+  [concern].aigx     ← any other concern files present
+```
+
+Check ids reference rules in concern files: `ARCH-no-deep-imports` is in `architecture.aigx` as `<rule id="ARCH-no-deep-imports">`. Read the rule before writing code.
 
 ## Keeping the genome current
 
-From `.aigx/agent.aigx`:
-- Rename a file → update `path` in `files.aigx`, same change-set
-- Create a new file → add a `<file>` entry in `files.aigx`
-- Never rename rule ids — only update their text in-place
+**Rename/move a file** with a `files.aigx` entry → update `path="..."` in the **same change-set**. A rename without a genome update is an incomplete change.
+
+**Create a new file** agents will edit → add a `<file>` entry in `files.aigx` with `<role>` + at least one `<check>` id.
+
+**Rule ids are permanent** — never rename or delete them; update text in-place only.
+
+**Code change makes a rule wrong** → update the rule text in the same change-set.
+
+**After renames/deletes/adds:** verify all `<file path>` entries still exist and all `<check>` ids resolve.
+
+**Never add entries speculatively.** Lean genomes win.
 
 ## Validate
 

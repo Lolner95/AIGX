@@ -39,10 +39,29 @@ colocated with source folders.
 
 ## 2. Rule identifiers
 
-Every rule has a stable identifier of the form `PREFIX-N` (e.g. `ARCH-2`, `DATA-1`, `ENG-10`).
+Every rule has a stable identifier of the form `PREFIX-SLUG` where SLUG is either a **sequential number**
+or a **semantic kebab-case phrase**. Both are valid; **semantic slugs are recommended** for new genomes
+because a human reviewer sees `ARCH-no-deep-imports` and immediately knows the rule without opening a
+second file.
 
+```
+# Numeric (still valid, common in existing genomes)
+ARCH-2     DATA-1     ENG-10
+
+# Semantic (recommended for new genomes)
+ARCH-no-deep-imports     DATA-integer-cents     ENG-no-idor
+```
+
+| Numeric | Semantic equivalent | Rule |
+|---|---|---|
+| `ARCH-2` | `ARCH-no-deep-imports` | Every feature exposes one public barrel; deep imports forbidden. |
+| `DATA-1` | `DATA-integer-cents` | Monetary values are integer cents; float money is forbidden. |
+| `ENG-7` | `ENG-no-idor` | Authorization must scope every query to the authenticated principal. |
+
+Rules:
 - The `PREFIX` SHOULD name the concern (`ARCH`, `DATA`, `AUTH`, `CACHE`, `PERF`, `TEST`, `AI`, `OFF`,
   `ENG`, …). The prefix is conventionally the uppercased concern name.
+- The SLUG MUST be ASCII letters, digits, and hyphens only (regex: `[A-Za-z0-9-]+`).
 - Ids MUST be stable across edits - they are the cross-reference backbone used by `<check>` lists,
   `<fact>`s, and gotchas. Renaming a rule id is a breaking change to the genome.
 - Ids are the unit of *parity*: any tool that re-renders a genome MUST preserve the full rule-id set.
@@ -275,6 +294,69 @@ import-boundary rules. See [docs/limitations.md §2](docs/limitations.md#2-devel
 This spec is **v1.1**. Backwards-incompatible changes increment the major version; backwards-compatible
 additions increment the minor. Genomes MAY declare their target version via an optional `version="1.1"`
 attribute on the root of `protocol.aigx`.
+
+---
+
+## 10. JIT context hydration (RECOMMENDED integration pattern)
+
+The default integration (§4) asks the **agent** to read `.aigx/` files before editing. This works, but it
+relies on model compliance with multi-step reading instructions ("tool laziness" means some models skip
+steps under latency pressure).
+
+A more robust pattern is **JIT (Just-In-Time) context hydration**: the **environment** - not the agent -
+resolves the genome entry and injects it into the agent's context before inference runs.
+
+```
+┌──────────────────────────────────────────────────────────┐
+│  edit request: "fix bookMeeting.ts"                      │
+│         │                                                │
+│         ▼                                                │
+│  ┌─────────────────────────────────────────┐             │
+│  │  ENVIRONMENT (IDE / MCP / CI runner)    │             │
+│  │  aigx-lint --resolve bookMeeting.ts     │  O(1)       │
+│  │  → injects <file> entry into system     │             │
+│  │    prompt for this inference call       │             │
+│  └─────────────────────────────────────────┘             │
+│         │                                                │
+│         ▼                                                │
+│  AGENT receives task + pre-resolved boundary             │
+│  (no multi-step reads needed; constraint is already in   │
+│   the context window at the edit site)                   │
+└──────────────────────────────────────────────────────────┘
+```
+
+**Implementation via MCP:** expose `aigx-lint --resolve <path>` as an MCP tool. The IDE/client calls it
+automatically whenever the agent opens a file for editing, and prepends the result to the context. The
+agent never sees the raw `files.aigx`; it receives the resolved, file-specific boundary directly.
+
+```json
+{
+  "name": "aigx_resolve",
+  "description": "Return the AIGX boundary entry for a file path (role, forbid, gotcha, check ids).",
+  "inputSchema": {
+    "type": "object",
+    "properties": { "path": { "type": "string", "description": "Repo-relative file path." } },
+    "required": ["path"]
+  }
+}
+```
+
+**Implementation via pre-prompt injection:** in a CI/CD or CLI wrapper, resolve the file before
+constructing the LLM request and inject the `<file>` block into the system prompt:
+
+```python
+# Pseudocode - run before every agent inference call
+entry = subprocess.check_output(
+    ['python', 'tools/aigx-lint/aigx_lint.py', '--resolve', target_file, '--root', '.'],
+    text=True
+)
+system_prompt = base_system_prompt + f"\n\nAIGX boundary for {target_file}:\n{entry}"
+```
+
+See [`docs/jit-hydration.md`](docs/jit-hydration.md) for full patterns, reference implementations, and
+how to wire this into Claude Code, Cursor, and custom agents.
+
+---
 
 See [`examples/sourcing-app/`](examples/sourcing-app/) for a complete conforming genome,
 [`BENCHMARK.md`](BENCHMARK.md) for the evidence behind every "SHOULD", and

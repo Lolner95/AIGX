@@ -1,0 +1,7 @@
+<aigx-protocol version="1.1">
+  <read-first>Open .aigx/files.aigx and find the &lt;file&gt; entry for EACH file you will edit - it lists that file's forbidden/allowed imports and gotchas. Obey its &lt;forbid pri="CRIT"&gt; and satisfy every id in its &lt;check&gt; before finishing.</read-first>
+  <step n="1">Read the per-concern rule files in .aigx/ that the task touches.</step>
+  <step n="2">Read .aigx/files.aigx for the per-file boundaries of files you edit.</step>
+  <step n="3">Schema-first; failing test first; minimal change, local blast radius.</step>
+  <step n="4">Run gates; verify each file's &lt;check&gt; ids hold before declaring done.</step>
+</aigx-protocol>

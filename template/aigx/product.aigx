@@ -1,0 +1,6 @@
+<aigx-product name="YOUR PRODUCT">
+  <name>TODO: product name + the markets/users it serves</name>
+  <standard>TODO: what does "good" mean here? (e.g. "must feel instant on slow 4G", "zero downtime", "auditable")</standard>
+  <freshness>TODO: which older docs are historical and yield to this genome? e.g. "Direction reset in 2026; anything in docs/legacy/ is historical."</freshness>
+  <stack>TODO: the tech stack (language, framework, data layer, test runner, validation).</stack>
+</aigx-product>

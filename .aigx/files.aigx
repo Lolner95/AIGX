@@ -1,0 +1,47 @@
+<aigx-files>
+  <file path="SPEC.md" domain="spec">
+    <role>Normative AIGX v1.1 specification — the single source of truth for the format</role>
+    <forbid pri="CRIT">NEVER remove or renumber existing section anchors (§2, §3, etc.) — external links and the toolchain depend on them</forbid>
+    <gotcha>Changes to §2 (rule ids) or §4 (agent addendum) cascade to all examples, templates, and integrations — update them in the same change-set or the repo is internally inconsistent</gotcha>
+    <check>ARCH-spec-is-normative ARCH-no-version-in-headers</check>
+  </file>
+
+  <file path="bin/create-aigx.mjs" domain="tooling">
+    <role>npx create-aigx scaffolding CLI — the primary user-facing entry point; reads from template/aigx/ and template/integrations/</role>
+    <forbid pri="CRIT">NEVER add npm imports or require() from node_modules — zero external dependencies; Node.js stdlib only</forbid>
+    <gotcha>template/aigx/ (not template/ root) is the .aigx source; changes to what gets scaffolded need template/aigx/ AND templates/starter/.aigx/ AND integrations/ all updated in the same change-set</gotcha>
+    <check>ARCH-create-aigx-zero-dep ARCH-template-mirrors-spec ARCH-integrations-match-template</check>
+  </file>
+
+  <file path="tools/aigx-lint/aigx_lint.py" domain="tooling">
+    <role>Zero-dependency AIGX genome validator and per-file resolver (--resolve PATH, --stats)</role>
+    <forbid pri="CRIT">NEVER import any package not in Python stdlib</forbid>
+    <gotcha>--resolve must exit 0 for a valid file path even when files.aigx has no entry for it — "no entry" is informational, not a lint error</gotcha>
+    <check>ARCH-tools-zero-dep</check>
+  </file>
+
+  <file path="tools/aigx-sync/aigx_sync.py" domain="tooling">
+    <role>Git pre-commit hook that auto-patches files.aigx path attributes when source files are renamed or moved</role>
+    <forbid pri="CRIT">NEVER add external dependencies</forbid>
+    <gotcha>After patching files.aigx, it must be re-staged with git add in the same hook run — a patch without re-staging leaves the commit with a wrong genome</gotcha>
+    <check>ARCH-tools-zero-dep</check>
+  </file>
+
+  <file path="CHANGELOG.md" domain="docs">
+    <role>Version history — [Unreleased] tracks in-flight work; merged to a version section on release</role>
+    <gotcha>Add to [Unreleased] in the same commit as the work, not at PR merge — batch additions are vague and harder to review</gotcha>
+    <check>ARCH-changelog-unreleased</check>
+  </file>
+
+  <file path="examples/sourcing-app/.aigx/files.aigx" domain="examples">
+    <role>The most complete worked example of files.aigx — the reference genome that other examples and benchmark against</role>
+    <gotcha>All check ids in this file must resolve to real rules in the concern files — run aigx-lint --root examples/sourcing-app to verify before committing</gotcha>
+    <check>ARCH-examples-must-pass-lint</check>
+  </file>
+
+  <file path="integrations/cursor/aigx.mdc" domain="integrations">
+    <role>Cursor MDC rule — copy to .cursor/rules/aigx.mdc in any project using AIGX; also scaffolded by create-aigx</role>
+    <gotcha>Must match template/integrations/cursor-aigx.mdc exactly — they are the same file in two homes</gotcha>
+    <check>ARCH-integrations-match-template</check>
+  </file>
+</aigx-files>

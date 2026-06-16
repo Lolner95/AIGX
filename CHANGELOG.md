@@ -35,9 +35,24 @@ All notable changes to the AIGX specification and repository are documented here
 - **[docs/authoring-guide.md](docs/authoring-guide.md)**: Step 1 updated with semantic id guidance
   and a numeric-vs-semantic comparison table.
 
+### Repo & structure
+- **Meta-genome** (`.aigx/` at repo root): AIGX now uses itself — 4 files (protocol, architecture,
+  files, agent) describing the SPEC.md, tooling, and genome maintenance rules for this repo.
+- **`integrations/`**: plug-and-play config files for 7 tools (Cursor, Claude Code, GitHub Copilot,
+  Windsurf, Aider, GitHub Actions CI, VS Code). Each file is ready to copy, with a
+  [`integrations/README.md`](integrations/README.md) explaining installation per tool.
+- **`template/aigx/`**: `.aigx` source files moved to a named subdirectory so `create-aigx` can
+  co-locate integration templates under `template/integrations/`.
+- **`template/integrations/`**: integration templates read by `create-aigx` during scaffolding.
+- **`bin/create-aigx.mjs`** rewritten: now scaffolds the full integration suite on top of `.aigx/` —
+  `.cursor/rules/aigx.mdc`, `CLAUDE.md` (appends if exists), `.github/copilot-instructions.md`,
+  `.github/workflows/aigx-validate.yml`, `.windsurfrules`. Added `--aigx-only` flag to skip
+  integrations. Zero new dependencies.
+- **README** quick-start updated to lead with `npx create-aigx`; tool support table updated with links
+  to `integrations/`; repo layout updated to reflect new directories.
+
 ### Planned
-- Exporters: `aigx → AGENTS.md / CLAUDE.md / .cursor/rules`
-- VS Code extension - hover a source file, see its `.aigx` boundary inline
+- VS Code extension — hover a source file, see its `.aigx` boundary inline
 - Monorepo-scale benchmark (5k+ files) - specification is in place, measurement is future work
 - Additional worked examples: Python (FastAPI), Go, monorepo
 

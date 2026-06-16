@@ -1,0 +1,31 @@
+---
+description: AIGX genome context — load the per-file boundary before any edit
+globs:
+alwaysApply: true
+---
+
+This repository uses **AIGX** (AI Genome Exchange) for structured agent context. The genome lives in `.aigx/` — not in your source files.
+
+## Before editing any file
+
+1. Open `.aigx/files.aigx` — find the `<file path="...">` entry for the file you're about to edit
+2. Read its `<role>` to understand the file's job
+3. Obey its `<forbid pri="CRIT">` — hard constraint, never violate
+4. Heed its `<gotcha>` — the single most important pitfall for this file
+5. Verify every rule id in its `<check>` before finishing
+
+Read `.aigx/protocol.aigx` for the full protocol. Read the concern files (`.aigx/architecture.aigx`, `.aigx/data.aigx`, etc.) that the check ids reference.
+
+## Keeping the genome current
+
+See `.aigx/agent.aigx` for the complete self-maintenance rules. Key rules:
+
+- **Rename a file?** Update its `path="..."` in `files.aigx` in the same change-set — never as a follow-up
+- **Create a new boundary file?** Add a `<file>` entry in `files.aigx` with at least `<role>` and one `<check>` id
+- **Rule ids are permanent** — never rename them; only update the text in-place
+
+## Validate
+
+```bash
+python tools/aigx-lint/aigx_lint.py --root .
+```

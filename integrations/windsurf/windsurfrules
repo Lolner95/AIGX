@@ -1,0 +1,27 @@
+# AIGX Context
+
+This repository uses AIGX (AI Genome Exchange) — a per-file context format for AI coding agents. The genome lives in `.aigx/`.
+
+## Read protocol
+
+For every file you will edit:
+1. Find its `<file path="...">` entry in `.aigx/files.aigx`
+2. Read its `<role>` — what the file does
+3. Obey `<forbid pri="CRIT">` — hard constraint, never violate
+4. Heed `<gotcha>` — the single worst pitfall here
+5. Verify every `<check>` id before finishing
+
+Full protocol in `.aigx/protocol.aigx`.
+
+## Keeping the genome current
+
+From `.aigx/agent.aigx`:
+- Rename a file → update `path` in `files.aigx`, same change-set
+- Create a new file → add a `<file>` entry in `files.aigx`
+- Never rename rule ids — only update their text in-place
+
+## Validate
+
+```bash
+python tools/aigx-lint/aigx_lint.py --root .
+```

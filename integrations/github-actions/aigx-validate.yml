@@ -1,0 +1,27 @@
+name: Validate AIGX Genome
+
+on:
+  push:
+    paths:
+      - '.aigx/**'
+      - '**/*.aigx'
+  pull_request:
+    paths:
+      - '.aigx/**'
+      - '**/*.aigx'
+
+jobs:
+  validate:
+    name: aigx-lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Run aigx-lint
+        run: |
+          curl -sSfL \
+            https://raw.githubusercontent.com/Lolner95/AIGX/main/tools/aigx-lint/aigx_lint.py \
+            -o aigx_lint.py
+          python aigx_lint.py --root .

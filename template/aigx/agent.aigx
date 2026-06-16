@@ -1,0 +1,21 @@
+<aigx-agent>
+  <!--
+    AIGX agent self-maintenance rules.
+    These rules tell an AI agent how to KEEP THE GENOME CURRENT as it works,
+    so the genome never falls behind the codebase.
+  -->
+
+  <rule id="AGENT-read-before-edit">Before editing any file, look up its &lt;file&gt; entry in .aigx/files.aigx. Read its &lt;forbid&gt;, &lt;gotcha&gt;, and &lt;check&gt; ids. Read the concern files those ids come from. Do not skip this step under any time pressure.</rule>
+
+  <rule id="AGENT-sync-on-rename">When you rename or move a source file that has an entry in .aigx/files.aigx, update the path attribute in the SAME change-set as the rename. A rename without a genome update is an incomplete change.</rule>
+
+  <rule id="AGENT-add-new-entry">When you create a new source file that other agents will likely edit, add a &lt;file&gt; entry for it in .aigx/files.aigx. Minimum: a &lt;role&gt; and one &lt;check&gt; id. Do not leave newly-created boundary files without an entry.</rule>
+
+  <rule id="AGENT-stable-ids">Rule ids are the cross-reference backbone. Never rename or delete a rule id. If a rule's meaning changes, update its text in-place. The id stays.</rule>
+
+  <rule id="AGENT-update-rule-text">When you change code that makes an existing rule in a concern file incorrect or outdated, update the rule text in the same change-set. The genome must describe reality, not history.</rule>
+
+  <rule id="AGENT-verify-after-task">After any task that renames, moves, deletes, or adds source files: mentally verify that every affected &lt;file path&gt; in files.aigx still exists and every &lt;check&gt; id still resolves. If aigx-lint is available, run it.</rule>
+
+  <rule id="AGENT-no-bloat">Do not add rules or file entries speculatively. Only add a rule if it prevents a real failure mode. Only add a file entry if the file is likely to be edited by an agent. Lean indexes outperformed rich ones in the benchmark.</rule>
+</aigx-agent>

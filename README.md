@@ -107,39 +107,52 @@ layer**: a richer, *measured*, per-file-precise substrate you author once and ca
 
 ---
 
-## Quick start (under 60 seconds)
+## Quick start — one command
 
-1. Copy the starter genome into your repo:
-   ```bash
-   # from your project root
-   cp -r path/to/aigx/templates/starter/.aigx .aigx
-   ```
-2. You now have:
-   ```text
-   your-repo/
-   ├── .aigx/
-   │   ├── protocol.aigx        # how an agent should read this genome (read-first)
-   │   ├── product.aigx         # what the product is + which docs are stale
-   │   ├── architecture.aigx    # one file per concern: rules as <rule id="…">
-   │   ├── data.aigx
-   │   ├── …
-   │   └── files.aigx           # ★ the per-file boundary index - the keystone
-   └── src/…                    # your code - left completely untouched
-   ```
-3. Fill in `files.aigx` - for each file an agent will touch, state its boundary:
+```bash
+npx create-aigx
+```
+
+That's it. Run it in your project root and you get:
+
+```text
+your-repo/
+├── .aigx/
+│   ├── protocol.aigx        ← the read protocol every agent loads first
+│   ├── product.aigx         ← product context + freshness clause
+│   ├── architecture.aigx    ← per-concern rules  (ARCH-* ids)
+│   ├── engineering.aigx     ← hard-correctness invariants (ENG-* ids)
+│   ├── files.aigx           ← ★ the per-file boundary index — fill this in
+│   └── agent.aigx           ← self-maintenance rules for agents
+│
+├── .cursor/rules/aigx.mdc   ← Cursor picks this up automatically
+├── CLAUDE.md                ← aigx section appended (or created)
+├── .github/
+│   ├── copilot-instructions.md   ← GitHub Copilot
+│   └── workflows/aigx-validate.yml  ← CI: validates genome on every push
+└── .windsurfrules           ← Windsurf
+```
+
+Every agent integration is wired up. No configuration needed. Your source code is untouched.
+
+**Then fill in three things:**
+
+1. **`.aigx/files.aigx`** — one `<file>` entry per source file your agent will touch:
    ```xml
    <file path="src/features/meetings/bookMeeting.ts" domain="meetings">
      <role>Book a meeting (validate slot + contact)</role>
-     <forbid pri="CRIT">NEVER import @/features/suppliers/internal/* (deep import = ARCH-2)</forbid>
-     <gotcha pri="CRIT">get contact_email from the suppliers PUBLIC api, never the internal mapper</gotcha>
-     <check>ARCH-2 ARCH-4 DATA-2 TEST-1</check>
+     <forbid pri="CRIT">NEVER import @/features/suppliers/internal/*</forbid>
+     <gotcha>get contact_email from the suppliers PUBLIC api, never the internal mapper</gotcha>
+     <check>ARCH-no-deep-imports DATA-integer-cents TEST-failing-first</check>
    </file>
    ```
-4. Point your agent at it. Add one line to your existing `AGENTS.md` / `CLAUDE.md` / system prompt:
-   > *This repo uses AIGX. Read `.aigx/protocol.aigx` first; for each file you edit, read its `<file>`
-   > entry in `.aigx/files.aigx` and obey its `<forbid>` and `<check>`.*
 
-That's it. A complete, real-world genome is in **[`examples/sourcing-app/`](examples/sourcing-app/)**.
+2. **`.aigx/architecture.aigx`** — replace the TODO stubs with your real rules.
+
+3. **`.aigx/product.aigx`** — product name, quality standard, which old docs are stale.
+
+A complete real-world genome is in **[`examples/sourcing-app/`](examples/sourcing-app/)**.
+The authoring guide walks you through it step by step: **[`docs/authoring-guide.md`](docs/authoring-guide.md)**.
 
 ---
 
@@ -226,20 +239,23 @@ Seven findings, each backed by the benchmark ([deep dive](docs/principles.md)):
 
 ## Tool support
 
-AIGX is plain text in a `.aigx/` directory, so **any** agent can use it today via one prompt line (see
-Quick Start). It's designed to be **tool-agnostic** and to *layer on top of* whatever you already use:
+`npx create-aigx` wires up all integrations automatically. Or copy individual files from
+[`integrations/`](integrations/) if you prefer to add just one tool:
 
-| Agent / tool | How to use AIGX today |
-|---|---|
-| Claude Code | Reference `.aigx/` from your `CLAUDE.md` (one line) |
-| Cursor | Reference `.aigx/` from a `.cursor/rules` rule |
-| GitHub Copilot | Reference `.aigx/` from `.github/copilot-instructions.md` |
-| Aider | Add `.aigx/protocol.aigx` to read-only context |
-| Any LLM / custom agent | Paste the addendum from [the spec](SPEC.md#agent-addendum) |
+| Agent / tool | What `create-aigx` creates | Manual path |
+|---|---|---|
+| **Cursor** | `.cursor/rules/aigx.mdc` (alwaysApply) | [integrations/cursor/](integrations/cursor/) |
+| **Claude Code** | `CLAUDE.md` aigx section | [integrations/claude-code/](integrations/claude-code/) |
+| **GitHub Copilot** | `.github/copilot-instructions.md` | [integrations/copilot/](integrations/copilot/) |
+| **Windsurf** | `.windsurfrules` | [integrations/windsurf/](integrations/windsurf/) |
+| **Aider** | — | [integrations/aider/](integrations/aider/) |
+| **GitHub Actions CI** | `.github/workflows/aigx-validate.yml` | [integrations/github-actions/](integrations/github-actions/) |
+| **Any LLM / custom agent** | — | Paste the addendum from [SPEC.md §4](SPEC.md#4-the-agent-addendum-agent-addendum) |
 
-> Ships today: **[`aigx-lint`](tools/aigx-lint/)** - validate a genome against your repo in CI (so it
-> can't silently rot) and resolve any file's boundary in O(1) (so it scales to monorepos). Exporters to
-> `AGENTS.md`/`CLAUDE.md`/`.mdc` are on the [roadmap](#status--roadmap).
+> **Also ships:** **[`aigx-lint`](tools/aigx-lint/)** — validates the genome in CI (can't silently rot)
+> and resolves any file's boundary in O(1) (scales to monorepos).
+> **[`aigx-sync`](tools/aigx-sync/)** — git pre-commit hook that auto-patches `files.aigx` when files
+> are renamed, so drift is physically impossible at the commit boundary.
 
 ---
 
@@ -287,45 +303,61 @@ Yes - it's MIT. Use it, fork it, build products on it, no permission needed.
 
 ```text
 aigx/
+├── .aigx/               ← this repo's own genome (AIGX uses AIGX)
 ├── README.md            ← you are here
-├── SPEC.md              ← the normative format specification (v1.1)
+├── SPEC.md              ← normative format specification (v1.1)
 ├── BENCHMARK.md         ← full method, results, raw data, challenger log
 ├── CHANGELOG.md         ← version history
 ├── CONTRIBUTING.md      ← how to contribute
 ├── CITATION.cff         ← citation metadata
 ├── LICENSE              ← MIT
 ├── llms.txt             ← machine-readable index for AI answer engines
+├── bin/
+│   └── create-aigx.mjs  ← npx create-aigx — scaffolds genome + all integrations
 ├── docs/
-│   ├── concept.md       ← the genome philosophy, in depth
+│   ├── concept.md       ← the genome philosophy
 │   ├── authoring-guide.md
-│   ├── migration.md     ← how to adopt AIGX alongside an existing AGENTS.md / CLAUDE.md
-│   ├── principles.md    ← the 7 benchmark-backed laws
-│   ├── limitations.md   ← scope, honest caveats & point-by-point responses to critique
-│   ├── glossary.md      ← terms and definitions
-│   ├── roadmap.md       ← planned work: exporters, VS Code ext, more examples, MCP
+│   ├── migration.md     ← adopting AIGX alongside existing AGENTS.md / CLAUDE.md
+│   ├── principles.md    ← the 7 benchmark-backed design laws
+│   ├── limitations.md   ← scope, honest caveats, point-by-point critique responses
+│   ├── jit-hydration.md ← JIT context hydration pattern (MCP, CI, editor)
+│   ├── glossary.md
+│   ├── roadmap.md
 │   └── faq.md
 ├── examples/
-│   ├── sourcing-app/    ← a complete, real-world genome (.aigx/ + domain cards)
-│   └── minimal/         ← the smallest valid genome (3 files, 1 rule, 1 entry)
+│   ├── sourcing-app/    ← complete real-world genome (.aigx/ + domain cards)
+│   └── minimal/         ← smallest valid genome (3 files, 1 rule, 1 entry)
+├── integrations/        ← plug-and-play config for every AI coding agent
+│   ├── cursor/          ← .cursor/rules/aigx.mdc
+│   ├── claude-code/     ← CLAUDE.md aigx section
+│   ├── copilot/         ← .github/copilot-instructions.md
+│   ├── windsurf/        ← .windsurfrules
+│   ├── aider/           ← .aider.conf.yml
+│   ├── github-actions/  ← CI workflow
+│   └── vscode/          ← extensions.json
 ├── templates/
-│   └── starter/.aigx/   ← copy this into your repo to begin
+│   └── starter/.aigx/   ← copy-paste starter genome
+├── template/            ← npm package source (read by create-aigx)
+│   ├── aigx/            ← .aigx/ files
+│   └── integrations/    ← integration templates
 └── tools/
-    └── aigx-lint/       ← zero-dep validator + per-file resolver (CI-ready)
+    ├── aigx-lint/       ← zero-dep validator + per-file resolver (CI-ready)
+    └── aigx-sync/       ← git pre-commit hook: auto-patches files.aigx on renames
 ```
 
 ---
 
 ## Status & roadmap
 
-- ✅ **Spec v1.1** - stable, normative; includes hierarchical/monorepo scaling ([SPEC.md](SPEC.md)).
-- ✅ **Benchmark** - n=60 on two models, reproducible, with honest [scope & limitations](docs/limitations.md).
-- ✅ **`aigx-lint`** - validate a genome against the repo (missing paths, dangling check-ids) + O(1)
-  per-file resolution. Zero-dependency. ([tools/aigx-lint](tools/aigx-lint/))
-- ✅ **Minimal example** - smallest valid genome for reference and tooling tests ([examples/minimal](examples/minimal/)).
-- ✅ **Migration guide** - step-by-step path from a flat `AGENTS.md`/`CLAUDE.md` ([docs/migration.md](docs/migration.md)).
-- 🔜 Exporters: `aigx → AGENTS.md / CLAUDE.md / .cursor/rules` - see [roadmap](docs/roadmap.md).
-- 🔜 VS Code extension - hover a file → see its `.aigx` boundary.
-- 🔜 Monorepo-scale benchmark (5k+ files) and more worked examples (Python, Go).
+- ✅ **Spec v1.1** — stable, normative; hierarchical/monorepo scaling included ([SPEC.md](SPEC.md))
+- ✅ **Benchmark** — n=60 on two models, reproducible, honest [scope & limitations](docs/limitations.md)
+- ✅ **`npx create-aigx`** — scaffolds genome + Cursor + Claude Code + Copilot + Windsurf + CI in one command
+- ✅ **`aigx-lint`** — validate genome in CI + O(1) per-file resolve. Zero-dep. ([tools/aigx-lint](tools/aigx-lint/))
+- ✅ **`aigx-sync`** — git hook auto-patches `files.aigx` on renames ([tools/aigx-sync](tools/aigx-sync/))
+- ✅ **Integrations** — ready-to-use configs for 7 tools ([integrations/](integrations/))
+- ✅ **Meta-genome** — this repo uses AIGX to describe itself (`.aigx/`)
+- 🔜 VS Code extension — hover a file → see its `.aigx` boundary inline
+- 🔜 Monorepo-scale benchmark (5k+ files) and more worked examples (Python, Go)
 
 Want to help? [CONTRIBUTING.md](CONTRIBUTING.md) · [open an issue](https://github.com/Lolner95/AIGX/issues) · star the repo to follow along.
 

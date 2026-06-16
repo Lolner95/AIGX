@@ -17,3 +17,6 @@ dist/
 # npm publish artifacts
 *.tgz
 package-lock.json
+
+# Generated documentation site
+site/

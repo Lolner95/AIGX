@@ -1,0 +1,10 @@
+<aigx-architecture>
+  <rule id="ARCH-spec-is-normative">SPEC.md is the single source of truth. Changes must be backward-compatible or require a version bump in CHANGELOG.md.</rule>
+  <rule id="ARCH-no-version-in-headers">Do not hard-code version numbers in SPEC.md section titles or conformance phrases — write "AIGX genome", not "AIGX v1.0 genome".</rule>
+  <rule id="ARCH-template-mirrors-spec">template/aigx/ and templates/starter/.aigx/ must stay in sync; a new .aigx file type in the spec requires changes to both, plus integrations/ and the create-aigx output list.</rule>
+  <rule id="ARCH-tools-zero-dep">aigx-lint and aigx-sync must remain zero external dependencies (Python stdlib only — no pip, no requirements.txt).</rule>
+  <rule id="ARCH-create-aigx-zero-dep">bin/create-aigx.mjs must have zero npm dependencies (Node.js stdlib only — no require from node_modules, no package imports).</rule>
+  <rule id="ARCH-examples-must-pass-lint">All genomes under examples/ must pass aigx-lint --root . with exit 0. A PR that breaks an example genome is not mergeable.</rule>
+  <rule id="ARCH-changelog-unreleased">Every shipped change must be added to CHANGELOG.md [Unreleased] in the same commit as the change, not batched at release time.</rule>
+  <rule id="ARCH-integrations-match-template">integrations/ and template/integrations/ must have matching content for the same tool — they are two homes for the same text and must be updated together.</rule>
+</aigx-architecture>

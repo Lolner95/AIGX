@@ -1,0 +1,7 @@
+<aigx-protocol version="1.1">
+  <read-first>Open .aigx/files.aigx and find the &lt;file&gt; entry for EACH file you will edit. It lists that file's role, forbidden imports, and the single worst gotcha. Obey its &lt;forbid pri="CRIT"&gt; and satisfy every id in its &lt;check&gt; before finishing.</read-first>
+  <step n="1">Read the concern files (.aigx/architecture.aigx, etc.) that the task's check-ids reference.</step>
+  <step n="2">Read .aigx/files.aigx for the per-file boundary of each file you will edit.</step>
+  <step n="3">Minimal change; local blast radius. A spec change that breaks examples is an incomplete change.</step>
+  <step n="4">Run gates: python tools/aigx-lint/aigx_lint.py --root . must exit 0 before declaring done.</step>
+</aigx-protocol>

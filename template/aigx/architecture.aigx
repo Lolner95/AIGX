@@ -1,0 +1,16 @@
+<!--
+  A per-concern rule file. Copy this pattern for each concern your codebase has:
+  data.aigx, auth.aigx, testing.aigx, performance.aigx, security.aigx, …
+  - Element name: aigx-<concern>
+  - One <rule> per rule, with a STABLE namespaced id.
+  - Numeric ids (ARCH-1) and semantic slugs (ARCH-no-deep-imports) are both valid.
+    Semantic slugs are recommended for new genomes — <check> lists become self-documenting.
+  - One clear sentence per rule. No essays. Ids are referenced by <check> in files.aigx.
+-->
+<aigx-architecture>
+  <rule id="ARCH-feature-slice">TODO: your top architectural rule (e.g. feature-sliced; each feature owns its modules).</rule>
+  <rule id="ARCH-no-deep-imports">TODO: the import-boundary rule (e.g. import foreign features only through their public barrel; no deep imports).</rule>
+  <rule id="ARCH-narrow-public-api">TODO: a rule about public surface (e.g. expose the narrowest API; never re-export internals).</rule>
+  <rule id="ARCH-no-cycles">TODO: a rule about cycles / layering.</rule>
+  <rule id="ARCH-schema-first">TODO: schema-first / contract-first, if applicable.</rule>
+</aigx-architecture>

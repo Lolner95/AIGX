@@ -43,6 +43,7 @@ if (help) {
     .aigx/architecture.aigx    per-concern rules (ARCH-* ids)
     .aigx/engineering.aigx     hard-correctness invariants (ENG-* ids)
     .aigx/files.aigx           per-file boundary index — fill this in
+    .aigx/agent.aigx           self-maintenance rules — keeps the genome current as agents work
 
   ${bold('Docs')}
     Spec      https://github.com/Lolner95/AIGX/blob/main/SPEC.md
@@ -77,7 +78,8 @@ for (const file of files) {
 const ADDENDUM =
   `This repository uses AIGX - the AI Genome Exchange context format. ` +
   `Read .aigx/protocol.aigx first; for each file you edit, find its <file> entry ` +
-  `in .aigx/files.aigx and obey its <forbid> and <check>.`
+  `in .aigx/files.aigx and obey its <forbid> and <check>. ` +
+  `Read .aigx/agent.aigx for the rules on keeping the genome current as you work.`
 
 console.log(`
   ${bold('AIGX')} ${dim('AI Genome Exchange')}

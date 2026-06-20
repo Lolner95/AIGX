@@ -5,3 +5,5 @@
 node_modules/**
 test/**
 **/.DS_Store
+icons/generate-icon.py
+*.vsix

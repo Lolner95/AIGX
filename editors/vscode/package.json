@@ -5,6 +5,9 @@
   "version": "0.1.0",
   "publisher": "aigx",
   "license": "MIT",
+  "icon": "icons/aigx-marketplace.png",
+  "pricing": "Free",
+  "galleryBanner": { "color": "#0b1020", "theme": "dark" },
   "engines": { "vscode": "^1.75.0" },
   "categories": ["Programming Languages", "Linters", "Snippets", "Formatters"],
   "keywords": ["aigx", "ai genome exchange", "ai agents", "context", "llm", "cursor", "claude", "copilot"],
@@ -12,6 +15,12 @@
   "homepage": "https://github.com/Lolner95/AIGX/tree/main/editors/vscode",
   "bugs": { "url": "https://github.com/Lolner95/AIGX/issues" },
   "main": "./extension.js",
+  "scripts": {
+    "vscode:prepublish": "node -e \"process.exit(0)\"",
+    "package": "npx --yes @vscode/vsce package --no-dependencies",
+    "publish": "npx --yes @vscode/vsce publish --no-dependencies",
+    "publish:ovsx": "npx --yes ovsx publish"
+  },
   "activationEvents": [
     "onLanguage:aigx",
     "workspaceContains:**/.aigx/files.aigx"

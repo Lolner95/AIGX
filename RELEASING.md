@@ -77,14 +77,16 @@ node scripts/release.mjs publish cargo     # cargo publish --manifest-path crate
 ```
 
 ### VS Code Marketplace — AIGX Language Support
-The manifest's `publisher` (`editors/vscode/package.json`) must be a Marketplace publisher you own, and add
-a 128×128 PNG `icon` before publishing. Then:
+The icon (`editors/vscode/icons/aigx-marketplace.png`) and manifest are ready; the only requirement is that
+`publisher` in `editors/vscode/package.json` is a Marketplace publisher you own (create one at
+<https://marketplace.visualstudio.com/manage> or `vsce create-publisher`). Then, from `editors/vscode/`:
 ```bash
-npm i -g @vscode/vsce
-cd editors/vscode && vsce login <publisher> && cd -
-node scripts/release.mjs publish vscode    # npx @vscode/vsce publish
+npm run package          # → aigx-language-support-0.1.0.vsix  (validates everything; no auth needed)
+vsce login <publisher>   # one-time, with your Azure DevOps PAT
+npm run publish          # publishes to the VS Code Marketplace
+npm run publish:ovsx     # mirror to Open VSX (Cursor / Windsurf / VSCodium); needs OVSX_PAT
 ```
-Also mirror to **Open VSX** (used by Cursor, Windsurf, VSCodium): `npx ovsx publish -p <token>`.
+To regenerate the icon: `python editors/vscode/icons/generate-icon.py`.
 
 ### Everything at once
 ```bash

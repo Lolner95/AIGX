@@ -13,6 +13,20 @@ All notable changes to the AIGX specification and repository are documented here
 
 ---
 
+## [1.3.3] - 2026-06-20
+
+AIGX is now published on **all three package registries**.
+
+### Published
+- **PyPI:** [`aigx 1.2.0`](https://pypi.org/project/aigx/) — `pip install aigx` (Python reference validator).
+- **crates.io:** [`aigx 1.2.0`](https://crates.io/crates/aigx) — `cargo install aigx` (Rust reference validator/CLI).
+- (npm landed in 1.3.2 — `@aigx/cli`, `@aigx/parser`, `@aigx/lint`, `create-aigx`.)
+
+So every reference implementation is installable from its native registry: `npm i -g @aigx/cli`,
+`pip install aigx`, `cargo install aigx`, and `npm create aigx`.
+
+---
+
 ## [1.3.2] - 2026-06-20
 
 First publish to npm. The CLI ships as **`@aigx/cli`** — npm reserves the bare `aigx` name (typosquat

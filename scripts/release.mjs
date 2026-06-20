@@ -46,7 +46,7 @@ function versions() {
   const cargo = reVer(R('crates/aigx/Cargo.toml'), /\nversion\s*=\s*"([^"]+)"/)
   return {
     rows: [
-      ['npm   aigx', cli, `bin VERSION ${cliConst === cli ? ok : red(cliConst)}`],
+      ['npm   @aigx/cli', cli, `bin VERSION ${cliConst === cli ? ok : red(cliConst)}`],
       ['npm   @aigx/parser', json('packages/parser/package.json').version, ''],
       ['npm   @aigx/lint', json('packages/lint/package.json').version, `dep @aigx/parser ${json('packages/lint/package.json').dependencies?.['@aigx/parser'] || '?'}`],
       ['npm   create-aigx', json('package.json').version, dim('(repo root)')],
@@ -98,7 +98,7 @@ function dryRun() {
   let fail = false
 
   // npm — per package
-  for (const w of ['@aigx/parser', '@aigx/lint', 'aigx']) {
+  for (const w of ['@aigx/parser', '@aigx/lint', '@aigx/cli']) {
     fail = step(`npm publish --dry-run -w ${w}`, () => {
       const r = tryRun(`npm publish --dry-run --workspace ${w} --access public`)
       const n = reVer(r.out, /total files:\s*(\d+)/)
@@ -146,7 +146,7 @@ const PUBLISH = {
   npm: [
     'npm publish --workspace @aigx/parser --access public',
     'npm publish --workspace @aigx/lint --access public',
-    'npm publish --workspace aigx --access public',
+    'npm publish --workspace @aigx/cli --access public',
     'npm publish', // create-aigx (root)
   ],
   cargo: ['cargo publish --manifest-path crates/aigx/Cargo.toml'],

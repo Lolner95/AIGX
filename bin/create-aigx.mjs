@@ -180,7 +180,7 @@ function summary() {
     ${rgb(GREEN, '3.')} ${bold('.aigx/product.aigx')}       product, quality bar, freshness clause
 
   ${star} ${bold('Then verify the genome:')}
-       ${rgb(BLUE, 'npx aigx lint')}   ${dim('(or  pip install aigx · cargo install aigx)')}
+       ${rgb(BLUE, 'npx @aigx/cli lint')}   ${dim('(or  pip install aigx · cargo install aigx)')}
 
   ${dim('60-second guide')}  ${rgb(PURPLE, 'https://github.com/Lolner95/AIGX/blob/main/docs/aigx-in-60-seconds.md')}
   ${dim('full spec     ')}  ${rgb(PURPLE, 'https://github.com/Lolner95/AIGX/blob/main/standard/AIGX-1.1.md')}

@@ -24,7 +24,7 @@ import { join, resolve, relative, dirname, basename } from 'node:path'
 import { argv, exit, stdout, stdin, env, version as nodeVersion, platform } from 'node:process'
 import { createInterface } from 'node:readline'
 
-const VERSION = '1.3.0'
+const VERSION = '1.3.1'
 const SPEC_VERSION = '1.1'
 
 // ── ANSI (respects NO_COLOR / non-TTY) ──────────────────────────────────────
@@ -638,7 +638,7 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: "20" }
       - name: Validate the genome
-        run: npx --yes aigx lint
+        run: npx --yes @aigx/cli lint
 `
 const INTEGRATIONS = [
   { key: 'cursor',   label: 'Cursor',              dest: '.cursor/rules/aigx.mdc',          body: INT_CURSOR },

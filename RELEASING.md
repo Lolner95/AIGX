@@ -59,7 +59,7 @@ Publishes in dependency order: `@aigx/parser` → `@aigx/lint` → `aigx` → `c
 ```bash
 npm publish --workspace @aigx/parser --access public
 npm publish --workspace @aigx/lint   --access public
-npm publish --workspace aigx          --access public
+npm publish --workspace @aigx/cli     --access public
 npm publish                            # create-aigx (repo root)
 ```
 

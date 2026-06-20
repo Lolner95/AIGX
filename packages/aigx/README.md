@@ -1,12 +1,12 @@
-# aigx
+# @aigx/cli
 
 The command-line tool for **AIGX — AI Genome Exchange**, the benchmark-validated, per-file context format
-for AI coding agents. Zero dependencies, Node 18+.
+for AI coding agents. The installed command is `aigx`. Zero dependencies, Node 18+.
 
 ```bash
-npm install -g aigx
+npm install -g @aigx/cli   # provides the `aigx` command
 # or run without installing:
-npx aigx <command>
+npx @aigx/cli <command>
 ```
 
 ## Commands

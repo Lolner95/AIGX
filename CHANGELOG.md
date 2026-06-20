@@ -5,18 +5,34 @@ All notable changes to the AIGX specification and repository are documented here
 
 ## [Unreleased]
 
-### Tooling
-- **Release harness** ([scripts/release.mjs](scripts/release.mjs); `npm run release:check` /
-  `npm run release:dry-run`): preflight (a version table, in-source version-consistency checks, and the
-  lint / conformance / format gates) plus **credential-free dry-runs of every registry** (npm per package,
-  `cargo publish --dry-run`, PyPI `build` + `twine check`, `vsce package`), and a `publish <target>` path
-  for the authenticated step. Full guide in [RELEASING.md](RELEASING.md).
-
 ### Planned
 - Language Server (LSP) — the same editor intelligence in any LSP-capable editor
 - Monorepo-scale benchmark (5k+ files) — specification is in place, measurement is future work
 - Additional worked examples: Python (FastAPI), Go, monorepo
 - Publish the ecosystem to npm / PyPI / Cargo / the VS Code Marketplace
+
+---
+
+## [1.3.2] - 2026-06-20
+
+First publish to npm. The CLI ships as **`@aigx/cli`** — npm reserves the bare `aigx` name (typosquat
+filter), so the package is scoped under the `aigx` org; the installed **command is still `aigx`**.
+
+### Published to npm
+- `@aigx/parser@1.2.0`, `@aigx/lint@1.2.0`, `@aigx/cli@1.3.1`, and `create-aigx@1.3.1` are live. Scaffold
+  with `npm create aigx` / `npx create-aigx`; run the CLI with `npm i -g @aigx/cli` (or `npx @aigx/cli`).
+
+### Tooling
+- **Release harness** ([scripts/release.mjs](scripts/release.mjs); `npm run release:check` /
+  `npm run release:dry-run`): preflight (version table + in-source consistency + lint/conformance/format)
+  plus credential-free dry-runs of every registry, and a `publish <target>` path. Guide in
+  [RELEASING.md](RELEASING.md).
+
+### Fixed
+- Updated every `npx aigx` / `npm i -g aigx` reference to `@aigx/cli` — the CLI's scaffolded CI
+  (`aigx init`), `create-aigx`'s output, the README / 60-seconds / RELEASING docs, the release harness, and
+  the meta-genome. (`pip install aigx` and `cargo install aigx` are unchanged — those packages are `aigx`.)
+- `@aigx/cli` and `create-aigx` bumped to 1.3.1 with the corrected references.
 
 ---
 
@@ -97,7 +113,7 @@ integrations. The spec version stays **1.1**; this is a tooling and repository r
 ### Tooling
 - **`aigx` CLI** ([packages/aigx](packages/aigx/)): the flagship command-line tool. Zero-dependency,
   self-contained Node (templates embedded). Commands: `init`, `lint`, `resolve`, `doctor`, `format`,
-  `check-conformance`. `npm i -g aigx` or `npx aigx`. Supports `.aigxignore` / `--exclude` for nested
+  `check-conformance`. `npm i -g @aigx/cli` or `npx @aigx/cli`. Supports `.aigxignore` / `--exclude` for nested
   independent genomes.
 - **`@aigx/parser`** ([packages/parser](packages/parser/)): the reference zero-dependency genome parser;
   text-in/data-out functions whose output matches the canonical JSON schema.

@@ -14,7 +14,7 @@ npx create-aigx
 Or with the CLI:
 
 ```bash
-npm install -g aigx   # or: npx aigx init
+npm install -g @aigx/cli   # or: npx @aigx/cli init
 aigx init
 ```
 

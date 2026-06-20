@@ -1,6 +1,6 @@
 {
-  "name": "aigx",
-  "version": "1.3.0",
+  "name": "@aigx/cli",
+  "version": "1.3.1",
   "description": "The AIGX (AI Genome Exchange) CLI — init, lint, resolve, doctor, format, and conformance-check your codebase's AI-agent genome. Zero dependencies.",
   "type": "module",
   "bin": {

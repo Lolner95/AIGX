@@ -152,7 +152,7 @@ Every agent integration is wired up. No configuration needed. Your source code i
 3. **`.aigx/product.aigx`** — product name, quality standard, which old docs are stale.
 
 **Then validate** — with the `aigx` CLI (zero-dependency). Install from whichever registry you live in —
-`npm i -g aigx` (or `npx aigx`), `pip install aigx`, or `cargo install aigx`:
+`npm i -g @aigx/cli` (or `npx @aigx/cli`), `pip install aigx`, or `cargo install aigx`:
 
 ```bash
 aigx lint                                  # required files, resolving checks, no stale paths

@@ -42,7 +42,7 @@
   </file>
 
   <file path="packages/aigx/bin/aigx.mjs" domain="tooling">
-    <role>The aigx CLI — init, lint, resolve, doctor, format, check-conformance. The flagship npm package (npm i -g aigx).</role>
+    <role>The aigx CLI — init, lint, resolve, doctor, format, check-conformance. The flagship npm package @aigx/cli (npm i -g @aigx/cli).</role>
     <forbid pri="CRIT">NEVER add an npm dependency or read init templates from disk — the CLI must be self-contained for global install</forbid>
     <gotcha>Its lint logic must stay in parity with tools/aigx-lint/aigx_lint.py — change both validators together, or they disagree on the same genome</gotcha>
     <check>ARCH-cli-self-contained ARCH-validator-parity</check>

@@ -80,6 +80,12 @@
     <check>ARCH-examples-must-pass-lint</check>
   </file>
 
+  <file path="scripts/release.mjs" domain="tooling">
+    <role>Release orchestrator — preflight checks, credential-free registry dry-runs, and the publish path</role>
+    <gotcha>check and dry-run must stay side-effect-free (no uploads, no auth); only `publish` may upload</gotcha>
+    <check>ARCH-release-dry-run-safe</check>
+  </file>
+
   <file path="editors/textmate/aigx.tmLanguage.json" domain="editors">
     <role>Canonical TextMate grammar for .aigx — reused by VS Code, GitHub Linguist, Zed, Sublime, TextMate</role>
     <gotcha>This file is canonical; after editing, re-copy it to editors/vscode/syntaxes/aigx.tmLanguage.json so the extension matches</gotcha>

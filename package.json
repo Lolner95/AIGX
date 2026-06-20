@@ -3,6 +3,10 @@
   "version": "1.3.0",
   "description": "Scaffold an AIGX genome into your project in under 60 seconds",
   "type": "module",
+  "scripts": {
+    "release:check": "node scripts/release.mjs check",
+    "release:dry-run": "node scripts/release.mjs dry-run"
+  },
   "bin": {
     "create-aigx": "./bin/create-aigx.mjs"
   },

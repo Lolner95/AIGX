@@ -5,6 +5,13 @@ All notable changes to the AIGX specification and repository are documented here
 
 ## [Unreleased]
 
+### Tooling
+- **Release harness** ([scripts/release.mjs](scripts/release.mjs); `npm run release:check` /
+  `npm run release:dry-run`): preflight (a version table, in-source version-consistency checks, and the
+  lint / conformance / format gates) plus **credential-free dry-runs of every registry** (npm per package,
+  `cargo publish --dry-run`, PyPI `build` + `twine check`, `vsce package`), and a `publish <target>` path
+  for the authenticated step. Full guide in [RELEASING.md](RELEASING.md).
+
 ### Planned
 - Language Server (LSP) — the same editor intelligence in any LSP-capable editor
 - Monorepo-scale benchmark (5k+ files) — specification is in place, measurement is future work

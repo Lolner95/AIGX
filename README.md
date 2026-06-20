@@ -7,6 +7,9 @@
 **The open, benchmark-validated context format for AI coding agents.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-22c55e.svg)](LICENSE)
+[![npm @aigx/cli](https://img.shields.io/npm/v/@aigx/cli?label=npm%20%40aigx%2Fcli&color=22c55e)](https://www.npmjs.com/package/@aigx/cli)
+[![PyPI](https://img.shields.io/pypi/v/aigx?label=PyPI&color=3b82f6)](https://pypi.org/project/aigx/)
+[![crates.io](https://img.shields.io/crates/v/aigx?label=crates.io&color=f59e0b)](https://crates.io/crates/aigx)
 [![Spec](https://img.shields.io/badge/spec-v1.1-3b82f6.svg)](SPEC.md)
 [![Benchmark](https://img.shields.io/badge/benchmark-controlled%20·%202%20models%20·%20n%3D60-f59e0b.svg)](BENCHMARK.md)
 [![Status](https://img.shields.io/badge/status-stable-22c55e.svg)](#status--roadmap)
@@ -401,6 +404,7 @@ Highlighting comes from one canonical [TextMate grammar](editors/textmate/) (`so
 ## Status & roadmap
 
 - ✅ **Spec v1.1** — stable; **normative standard** with ABNF, JSON schema & IANA media type ([standard/](standard/))
+- ✅ **Published** — npm ([`@aigx/cli`](https://www.npmjs.com/package/@aigx/cli), [`create-aigx`](https://www.npmjs.com/package/create-aigx), `@aigx/parser`, `@aigx/lint`) · [PyPI `aigx`](https://pypi.org/project/aigx/) · [crates.io `aigx`](https://crates.io/crates/aigx)
 - ✅ **Benchmark** — n=60 on two models, reproducible, honest [scope & limitations](docs/limitations.md)
 - ✅ **`aigx` CLI** — init / lint / resolve / doctor / format / check-conformance. Zero-dep. ([packages/aigx](packages/aigx/))
 - ✅ **`@aigx/parser` + `@aigx/lint`** — programmatic parsing & validation ([packages/](packages/))

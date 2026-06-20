@@ -1,0 +1,153 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "AIGX",
+  "scopeName": "source.aigx",
+  "fileTypes": ["aigx"],
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#aigx-root-tag" },
+    { "include": "#file-entry-tag" },
+    { "include": "#rule-tag" },
+    { "include": "#known-tag" },
+    { "include": "#generic-tag" },
+    { "include": "#rule-id" },
+    { "include": "#entity" }
+  ],
+  "repository": {
+    "comment": {
+      "name": "comment.block.aigx",
+      "begin": "<!--",
+      "end": "-->",
+      "captures": { "0": { "name": "punctuation.definition.comment.aigx" } }
+    },
+
+    "entity": {
+      "name": "constant.character.entity.aigx",
+      "match": "&(?:lt|gt|amp|quot|apos|#[0-9]+|#x[0-9A-Fa-f]+);"
+    },
+
+    "rule-id": {
+      "comment": "A rule identifier PREFIX-SLUG appearing in element text (e.g. inside <check>).",
+      "match": "\\b([A-Za-z][A-Za-z0-9]*)(-)([A-Za-z0-9][A-Za-z0-9-]*)\\b",
+      "captures": {
+        "1": { "name": "entity.name.namespace.rule-prefix.aigx" },
+        "2": { "name": "punctuation.separator.rule-id.aigx" },
+        "3": { "name": "support.constant.rule-slug.aigx" }
+      }
+    },
+
+    "aigx-root-tag": {
+      "comment": "Root genome elements: <aigx-protocol>, <aigx-files>, <aigx-architecture>, ...",
+      "begin": "(</?)(aigx-[A-Za-z0-9_-]+)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.aigx" },
+        "2": { "name": "entity.name.tag.root.aigx support.class.aigx" }
+      },
+      "end": "(/?>)",
+      "endCaptures": { "1": { "name": "punctuation.definition.tag.end.aigx" } },
+      "patterns": [{ "include": "#attribute" }]
+    },
+
+    "file-entry-tag": {
+      "comment": "<file path=\"...\" domain=\"...\"> — the boundary index entry.",
+      "begin": "(</?)(file)\\b",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.aigx" },
+        "2": { "name": "entity.name.tag.file.aigx markup.bold" }
+      },
+      "end": "(/?>)",
+      "endCaptures": { "1": { "name": "punctuation.definition.tag.end.aigx" } },
+      "patterns": [{ "include": "#attribute" }]
+    },
+
+    "rule-tag": {
+      "comment": "<rule id=\"...\"> — a rule declaration.",
+      "begin": "(</?)(rule)\\b",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.aigx" },
+        "2": { "name": "entity.name.tag.rule.aigx markup.bold" }
+      },
+      "end": "(/?>)",
+      "endCaptures": { "1": { "name": "punctuation.definition.tag.end.aigx" } },
+      "patterns": [{ "include": "#attribute" }]
+    },
+
+    "known-tag": {
+      "comment": "Other elements defined by the AIGX spec.",
+      "begin": "(</?)(read-first|step|role|forbid|gotcha|check|c|name|standard|freshness|stack|purpose|public_api|test|blast|facts|fact)\\b",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.aigx" },
+        "2": { "name": "entity.name.tag.aigx" }
+      },
+      "end": "(/?>)",
+      "endCaptures": { "1": { "name": "punctuation.definition.tag.end.aigx" } },
+      "patterns": [{ "include": "#attribute" }]
+    },
+
+    "generic-tag": {
+      "comment": "Any other tag — tolerant, since AIGX is XML-style but not strict XML.",
+      "begin": "(</?)([A-Za-z_][A-Za-z0-9_.-]*)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.aigx" },
+        "2": { "name": "entity.name.tag.aigx" }
+      },
+      "end": "(/?>)",
+      "endCaptures": { "1": { "name": "punctuation.definition.tag.end.aigx" } },
+      "patterns": [{ "include": "#attribute" }]
+    },
+
+    "attribute": {
+      "patterns": [
+        { "include": "#attribute-pri" },
+        { "include": "#attribute-id-path" },
+        { "include": "#attribute-generic" }
+      ]
+    },
+
+    "attribute-pri": {
+      "comment": "pri=\"CRIT\" — the salience marker; CRIT is the validated uniform critical level.",
+      "begin": "\\b(pri)\\s*(=)\\s*(\")",
+      "beginCaptures": {
+        "1": { "name": "entity.other.attribute-name.aigx" },
+        "2": { "name": "punctuation.separator.key-value.aigx" },
+        "3": { "name": "punctuation.definition.string.begin.aigx" }
+      },
+      "end": "(\")",
+      "endCaptures": { "1": { "name": "punctuation.definition.string.end.aigx" } },
+      "patterns": [
+        { "name": "keyword.other.critical.aigx markup.bold", "match": "\\bCRIT\\b" },
+        { "name": "string.quoted.double.aigx", "match": "[^\"]+" }
+      ]
+    },
+
+    "attribute-id-path": {
+      "comment": "id=\"...\" / path=\"...\" / domain=\"...\" / key=\"...\" — highlight rule ids inside.",
+      "begin": "\\b(id|path|domain|key|version|n)\\s*(=)\\s*(\")",
+      "beginCaptures": {
+        "1": { "name": "entity.other.attribute-name.aigx" },
+        "2": { "name": "punctuation.separator.key-value.aigx" },
+        "3": { "name": "punctuation.definition.string.begin.aigx" }
+      },
+      "end": "(\")",
+      "endCaptures": { "1": { "name": "punctuation.definition.string.end.aigx" } },
+      "contentName": "string.quoted.double.aigx",
+      "patterns": [
+        { "include": "#rule-id" },
+        { "include": "#entity" }
+      ]
+    },
+
+    "attribute-generic": {
+      "begin": "\\b([A-Za-z_][A-Za-z0-9_.:-]*)\\s*(=)\\s*(\")",
+      "beginCaptures": {
+        "1": { "name": "entity.other.attribute-name.aigx" },
+        "2": { "name": "punctuation.separator.key-value.aigx" },
+        "3": { "name": "punctuation.definition.string.begin.aigx" }
+      },
+      "end": "(\")",
+      "endCaptures": { "1": { "name": "punctuation.definition.string.end.aigx" } },
+      "contentName": "string.quoted.double.aigx",
+      "patterns": [{ "include": "#entity" }]
+    }
+  }
+}

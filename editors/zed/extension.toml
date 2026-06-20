@@ -1,0 +1,14 @@
+id = "aigx"
+name = "AIGX"
+version = "0.1.0"
+schema_version = 1
+authors = ["Grégory Parisotto <gregory@feex.it>"]
+description = "AIGX (AI Genome Exchange) language support for Zed — syntax highlighting for .aigx genome files."
+repository = "https://github.com/Lolner95/AIGX"
+
+# The grammar source is editors/tree-sitter-aigx in this repo. Before this extension works,
+# generate the parser (`tree-sitter generate`) and publish it; then pin `commit` below.
+[grammars.aigx]
+repository = "https://github.com/Lolner95/AIGX"
+path = "editors/tree-sitter-aigx"
+commit = "0000000000000000000000000000000000000000"

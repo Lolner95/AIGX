@@ -13,6 +13,24 @@ All notable changes to the AIGX specification and repository are documented here
 
 ---
 
+## [1.3.1] - 2026-06-20
+
+Editor ecosystem: `.aigx` now highlights across more surfaces — including GitHub — all from one canonical grammar.
+
+### Editors
+- **GitHub highlighting** ([.gitattributes](.gitattributes)): `.aigx` renders with XML highlighting on
+  GitHub today (kept out of the language bar) — interim until AIGX lands in Linguist.
+- **GitHub Linguist kit** ([editors/linguist](editors/linguist/)): a `languages.yml` entry
+  (`tm_scope: source.aigx`), a sample, and a step-by-step PR guide to register AIGX in github/linguist.
+- **TextMate bundle** ([editors/textmate/AIGX.tmbundle](editors/textmate/)): wraps the canonical grammar.
+- **Sublime Text** ([editors/sublime](editors/sublime/)): a native `aigx.sublime-syntax`.
+- **Zed** ([editors/zed](editors/zed/)) + a **tree-sitter grammar** ([editors/tree-sitter-aigx](editors/tree-sitter-aigx/)):
+  extension + grammar source (experimental — needs `tree-sitter generate`).
+- **[editors/README.md](editors/README.md)** ecosystem index; meta-genome rule `ARCH-grammar-canonical`
+  updated so every derivation (VS Code copy, tmbundle, Sublime, tree-sitter) stays in sync with the canonical grammar.
+
+---
+
 ## [1.3.0] - 2026-06-20
 
 Editor support + a world-class adoption kit. The specification version stays **1.1**.

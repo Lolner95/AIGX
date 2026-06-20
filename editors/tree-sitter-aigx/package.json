@@ -1,0 +1,19 @@
+{
+  "name": "tree-sitter-aigx",
+  "version": "0.1.0",
+  "description": "tree-sitter grammar for AIGX (AI Genome Exchange) — source for the Zed extension and other tree-sitter consumers.",
+  "main": "bindings/node",
+  "keywords": ["tree-sitter", "parser", "aigx", "ai-genome-exchange"],
+  "license": "MIT",
+  "repository": { "type": "git", "url": "git+https://github.com/Lolner95/AIGX.git", "directory": "editors/tree-sitter-aigx" },
+  "scripts": {
+    "generate": "tree-sitter generate",
+    "test": "tree-sitter test"
+  },
+  "devDependencies": {
+    "tree-sitter-cli": "^0.22"
+  },
+  "tree-sitter": [
+    { "scope": "source.aigx", "file-types": ["aigx"] }
+  ]
+}

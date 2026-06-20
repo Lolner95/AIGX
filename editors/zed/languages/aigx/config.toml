@@ -1,0 +1,17 @@
+name = "AIGX"
+grammar = "aigx"
+path_suffixes = ["aigx"]
+block_comment = ["<!-- ", " -->"]
+autoclose_before = ">\""
+
+[[brackets]]
+start = "<"
+end = ">"
+close = true
+newline = false
+
+[[brackets]]
+start = "\""
+end = "\""
+close = true
+newline = false

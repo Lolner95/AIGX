@@ -1,0 +1,17 @@
+<!--
+  A representative AIGX file (the per-file boundary index) used as a GitHub Linguist sample.
+  See the full format at https://github.com/Lolner95/AIGX/blob/main/standard/AIGX-1.1.md
+-->
+<aigx-files>
+  <file path="src/features/meetings/bookMeeting.ts" domain="meetings">
+    <role>Book a meeting (validate slot + contact)</role>
+    <forbid pri="CRIT">NEVER import @/features/suppliers/internal/* (deep import = ARCH-no-deep-imports)</forbid>
+    <gotcha>get contact_email from the suppliers PUBLIC api, never the internal mapper</gotcha>
+    <check>ARCH-no-deep-imports DATA-integer-cents TEST-failing-first</check>
+  </file>
+
+  <file path="src/shared/schemas/supplier.ts" domain="suppliers">
+    <role>Zod schema for a supplier — the single source of truth for the shape</role>
+    <check>ARCH-schema-first</check>
+  </file>
+</aigx-files>

@@ -366,9 +366,12 @@ aigx/
 ├── template/            ← npm package source (read by create-aigx)
 │   ├── aigx/            ← .aigx/ files
 │   └── integrations/    ← integration templates
-├── editors/
-│   ├── textmate/        ← canonical TextMate grammar (VS Code, Linguist, Zed, Sublime)
-│   └── vscode/          ← "AIGX Language Support" extension
+├── editors/             ← .aigx highlighting everywhere (one canonical grammar)
+│   ├── vscode/          ← "AIGX Language Support" extension (full features)
+│   ├── textmate/        ← canonical grammar + .tmbundle
+│   ├── sublime/         ← native .sublime-syntax
+│   ├── zed/             ← Zed extension (+ tree-sitter-aigx/ grammar)
+│   └── linguist/        ← GitHub Linguist registration kit
 ├── crates/
 │   └── aigx/            ← Cargo: cargo install aigx — Rust reference validator (std-only)
 ├── tests/
@@ -388,8 +391,10 @@ Open any `.aigx` file in VS Code with **[AIGX Language Support](editors/vscode/)
 file icons, snippets, autocomplete, **hover on rule ids**, **go-to-definition**, inline **diagnostics** (the
 same checks as `aigx-lint`), formatting, and **AIGX: Resolve current file's boundary**.
 
-Highlighting comes from one canonical [TextMate grammar](editors/textmate/) (`source.aigx`) that also drops
-into GitHub Linguist, Zed, Sublime Text, TextMate, Cursor, and Windsurf.
+Highlighting comes from one canonical [TextMate grammar](editors/textmate/) (`source.aigx`). And `.aigx`
+**highlights on GitHub today** (via [`.gitattributes`](.gitattributes)) — with ready-made configs for
+**Sublime Text**, **TextMate**, and **Zed**, plus a **GitHub Linguist** PR kit, all in
+[`editors/`](editors/) (see the [ecosystem index](editors/README.md)).
 
 ---
 
@@ -410,6 +415,8 @@ into GitHub Linguist, Zed, Sublime Text, TextMate, Cursor, and Windsurf.
 - ✅ **Meta-genome** — this repo uses AIGX to describe itself (`.aigx/`)
 - ✅ **VS Code extension** — highlighting · icons · snippets · diagnostics · hover · go-to-definition · format ([editors/vscode](editors/vscode/))
 - ✅ **TextMate grammar** — one canonical grammar reused across editors + Linguist ([editors/textmate](editors/textmate/))
+- ✅ **Highlights on GitHub** — `.aigx` rendered today via `.gitattributes`; Linguist PR kit ready ([editors/linguist](editors/linguist/))
+- ✅ **Sublime · TextMate · Zed** — ready-made editor configs ([editors/](editors/))
 - 🔜 Language Server (LSP) — the same intelligence in any LSP-capable editor
 - 🔜 Monorepo-scale benchmark (5k+ files) and more worked examples (Python, Go)
 

@@ -1,0 +1,19 @@
+# Fragment to add to github/linguist → lib/linguist/languages.yml (keep the file alphabetical).
+#
+# The grammar referenced by `tm_scope: source.aigx` is this repo's canonical grammar,
+# editors/textmate/aigx.tmLanguage.json. `language_id` must be a unique integer — Linguist
+# validates/assigns it; the value below is a placeholder to replace during the PR.
+#
+# AIGX is XML-style markup used as data/config for AI coding agents, so it is typed `data`
+# (like XML/YAML/JSON) with XML editor modes for highlighting in the GitHub web editor.
+
+AIGX:
+  type: data
+  color: "#3b82f6"
+  extensions:
+  - ".aigx"
+  tm_scope: source.aigx
+  ace_mode: xml
+  codemirror_mode: xml
+  codemirror_mime_type: text/xml
+  language_id: 1000000001

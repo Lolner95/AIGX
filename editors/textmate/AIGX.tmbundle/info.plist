@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>name</key>
+	<string>AIGX</string>
+	<key>uuid</key>
+	<string>7d9d2e1a-2c3b-4a5e-9f10-0a1b2c3d4e5f</string>
+	<key>description</key>
+	<string>AIGX (AI Genome Exchange) language grammar — syntax highlighting for .aigx genome files.</string>
+	<key>contactName</key>
+	<string>Grégory Parisotto</string>
+</dict>
+</plist>

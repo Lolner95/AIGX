@@ -16,3 +16,10 @@
 *.jpg binary
 *.svg binary
 *.ico binary
+
+# GitHub highlighting for AIGX genome files.
+# AIGX is XML-style markup. Until AIGX ships as a first-class language in
+# github/linguist (contribution kit: editors/linguist/), render .aigx with XML
+# highlighting and keep it out of the repo's language statistics. Remove once
+# AIGX is accepted into Linguist (tm_scope: source.aigx).
+*.aigx linguist-language=XML linguist-detectable=false

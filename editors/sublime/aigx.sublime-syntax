@@ -1,0 +1,89 @@
+%YAML 1.2
+---
+# AIGX (AI Genome Exchange) — native Sublime Text syntax.
+# Mirrors the canonical TextMate grammar (editors/textmate/aigx.tmLanguage.json).
+name: AIGX
+file_extensions:
+  - aigx
+scope: source.aigx
+version: 2
+
+contexts:
+  main:
+    - include: comments
+    - include: tags
+    - include: rule-ids
+
+  comments:
+    - match: '<!--'
+      scope: punctuation.definition.comment.begin.aigx
+      push:
+        - meta_scope: comment.block.aigx
+        - match: '-->'
+          scope: punctuation.definition.comment.end.aigx
+          pop: true
+
+  tags:
+    - match: '(</?)(aigx-[A-Za-z0-9_-]+|file|rule|role|forbid|gotcha|check|read-first|step|facts|fact|name|standard|freshness|stack|purpose|public_api|test|blast|c)\b'
+      captures:
+        1: punctuation.definition.tag.begin.aigx
+        2: entity.name.tag.aigx
+      push: tag-attrs
+    - match: '(</?)([A-Za-z_][A-Za-z0-9_.-]*)'
+      captures:
+        1: punctuation.definition.tag.begin.aigx
+        2: entity.name.tag.aigx
+      push: tag-attrs
+
+  tag-attrs:
+    - match: '/?>'
+      scope: punctuation.definition.tag.end.aigx
+      pop: true
+    - match: '\b(pri)\s*(=)\s*(")'
+      captures:
+        1: entity.other.attribute-name.aigx
+        2: punctuation.separator.key-value.aigx
+        3: punctuation.definition.string.begin.aigx
+      push:
+        - meta_scope: string.quoted.double.aigx
+        - match: '\bCRIT\b'
+          scope: keyword.other.critical.aigx
+        - match: '"'
+          scope: punctuation.definition.string.end.aigx
+          pop: true
+    - match: '\b(id|path|domain|key|version|n)\s*(=)\s*(")'
+      captures:
+        1: entity.other.attribute-name.aigx
+        2: punctuation.separator.key-value.aigx
+        3: punctuation.definition.string.begin.aigx
+      push: attr-value-ruleid
+    - match: '\b([A-Za-z_][A-Za-z0-9_.:-]*)\s*(=)\s*(")'
+      captures:
+        1: entity.other.attribute-name.aigx
+        2: punctuation.separator.key-value.aigx
+        3: punctuation.definition.string.begin.aigx
+      push: attr-value
+
+  attr-value-ruleid:
+    - meta_scope: string.quoted.double.aigx
+    - match: '[A-Za-z][A-Za-z0-9]*-[A-Za-z0-9-]+'
+      scope: support.constant.rule-id.aigx
+    - include: entities
+    - match: '"'
+      scope: punctuation.definition.string.end.aigx
+      pop: true
+
+  attr-value:
+    - meta_scope: string.quoted.double.aigx
+    - include: entities
+    - match: '"'
+      scope: punctuation.definition.string.end.aigx
+      pop: true
+
+  entities:
+    - match: '&(?:lt|gt|amp|quot|apos|#[0-9]+|#x[0-9A-Fa-f]+);'
+      scope: constant.character.entity.aigx
+
+  rule-ids:
+    - match: '\b[A-Za-z][A-Za-z0-9]*-[A-Za-z0-9-]+\b'
+      scope: support.constant.rule-id.aigx

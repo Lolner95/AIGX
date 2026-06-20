@@ -1,0 +1,6 @@
+<aigx-files>
+  <file path="src/foo.ts" domain="core">
+    <role>Valid entry; the genome is missing protocol.aigx</role>
+    <check>ARCH-no-deep-imports</check>
+  </file>
+</aigx-files>

@@ -7,4 +7,10 @@
   <rule id="ARCH-examples-must-pass-lint">All genomes under examples/ must pass aigx-lint --root . with exit 0. A PR that breaks an example genome is not mergeable.</rule>
   <rule id="ARCH-changelog-unreleased">Every shipped change must be added to CHANGELOG.md [Unreleased] in the same commit as the change, not batched at release time.</rule>
   <rule id="ARCH-integrations-match-template">integrations/ and template/integrations/ must have matching content for the same tool — they are two homes for the same text and must be updated together.</rule>
+  <rule id="ARCH-standard-governs">standard/AIGX-1.1.md is the normative specification for conformance; SPEC.md is the informal version and must point to it. A normative change updates standard/ (spec, ABNF, schema, conformance) in the same change-set.</rule>
+  <rule id="ARCH-cli-self-contained">The aigx CLI (packages/aigx/bin/aigx.mjs) must be self-contained: Node stdlib only, zero dependencies, with its init templates embedded as string constants — so `npm i -g aigx` works without the repo checked out.</rule>
+  <rule id="ARCH-packages-zero-ext-dep">packages/* must have no EXTERNAL runtime dependencies. The only permitted internal dependency is @aigx/lint depending on @aigx/parser.</rule>
+  <rule id="ARCH-validator-parity">The reference validators — the Node CLI (aigx lint / @aigx/lint), the Python validator (tools/aigx-lint), and the Rust crate (crates/aigx) — must report the same pass/fail for the same genome. A change to validation rules updates every implementation in the same change-set.</rule>
+  <rule id="ARCH-crate-std-only">crates/aigx must compile with the Rust standard library only — no external crates; the [dependencies] table in Cargo.toml stays empty.</rule>
+  <rule id="ARCH-conformance-suite">Every reference validator must agree with tests/conformance/run.py on all fixtures. A new validation rule adds or updates a fixture; a new validator is wired into the runner.</rule>
 </aigx-architecture>

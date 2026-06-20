@@ -1,0 +1,6 @@
+<aigx-files>
+  <file path="src/ghost.ts" domain="core">
+    <role>Points at a file that does not exist on disk</role>
+    <check>ARCH-no-deep-imports</check>
+  </file>
+</aigx-files>

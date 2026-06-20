@@ -1,0 +1,3 @@
+<aigx-architecture>
+  <rule id="ARCH-no-deep-imports">Import features only through their public barrel; deep imports are forbidden.</rule>
+</aigx-architecture>

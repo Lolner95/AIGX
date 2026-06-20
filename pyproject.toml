@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aigx"
+version = "1.2.0"
+description = "Reference validator + resolver for AIGX (AI Genome Exchange) — the open context format for AI coding agents. Zero dependencies."
+readme = "tools/aigx-lint/README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [{ name = "Grégory Parisotto", email = "gregory@feex.it" }]
+keywords = ["aigx", "ai-genome-exchange", "ai", "agents", "context", "lint", "validator", "llm"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Software Development :: Quality Assurance",
+  "Topic :: Software Development :: Build Tools",
+]
+
+[project.urls]
+Homepage = "https://github.com/Lolner95/AIGX"
+Specification = "https://github.com/Lolner95/AIGX/blob/main/standard/AIGX-1.1.md"
+Source = "https://github.com/Lolner95/AIGX"
+Issues = "https://github.com/Lolner95/AIGX/issues"
+
+# `pip install aigx` installs the Python reference validator. The full subcommand CLI
+# (init/lint/resolve/doctor/format/check-conformance) ships as the npm package `aigx`.
+# Here, both `aigx` and `aigx-lint` map to the validator; `aigx lint` / `aigx resolve PATH`
+# are accepted as aliases of the flag-style interface.
+[project.scripts]
+aigx = "aigx_lint:main"
+aigx-lint = "aigx_lint:main"
+
+[tool.setuptools]
+py-modules = ["aigx_lint"]
+
+[tool.setuptools.package-dir]
+"" = "tools/aigx-lint"

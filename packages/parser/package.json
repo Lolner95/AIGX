@@ -1,0 +1,36 @@
+{
+  "name": "@aigx/parser",
+  "version": "1.2.0",
+  "description": "Reference parser for AIGX (AI Genome Exchange) genomes. Zero dependencies. Text-in, data-out; data model matches the AIGX 1.1 JSON schema.",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": {
+    ".": "./index.mjs"
+  },
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "aigx",
+    "parser",
+    "ai",
+    "agents",
+    "context",
+    "genome"
+  ],
+  "license": "MIT",
+  "author": "Grégory Parisotto <gregory@feex.it>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lolner95/AIGX.git",
+    "directory": "packages/parser"
+  },
+  "homepage": "https://github.com/Lolner95/AIGX/tree/main/packages/parser#readme",
+  "bugs": {
+    "url": "https://github.com/Lolner95/AIGX/issues"
+  }
+}

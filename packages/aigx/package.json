@@ -1,0 +1,41 @@
+{
+  "name": "aigx",
+  "version": "1.2.0",
+  "description": "The AIGX (AI Genome Exchange) CLI — init, lint, resolve, doctor, format, and conformance-check your codebase's AI-agent genome. Zero dependencies.",
+  "type": "module",
+  "bin": {
+    "aigx": "./bin/aigx.mjs"
+  },
+  "files": [
+    "bin",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "aigx",
+    "ai",
+    "agents",
+    "context",
+    "genome",
+    "cli",
+    "lint",
+    "claude",
+    "cursor",
+    "copilot",
+    "aider",
+    "code-generation"
+  ],
+  "license": "MIT",
+  "author": "Grégory Parisotto <gregory@feex.it>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lolner95/AIGX.git",
+    "directory": "packages/aigx"
+  },
+  "homepage": "https://github.com/Lolner95/AIGX#readme",
+  "bugs": {
+    "url": "https://github.com/Lolner95/AIGX/issues"
+  }
+}

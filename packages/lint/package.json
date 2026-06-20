@@ -1,0 +1,41 @@
+{
+  "name": "@aigx/lint",
+  "version": "1.2.0",
+  "description": "Programmatic validator for AIGX (AI Genome Exchange) genomes. Implements the AIGX 1.1 conformance checks. Built on @aigx/parser.",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": {
+    ".": "./index.mjs"
+  },
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@aigx/parser": "^1.2.0"
+  },
+  "keywords": [
+    "aigx",
+    "lint",
+    "validate",
+    "ai",
+    "agents",
+    "context",
+    "genome",
+    "conformance"
+  ],
+  "license": "MIT",
+  "author": "Grégory Parisotto <gregory@feex.it>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lolner95/AIGX.git",
+    "directory": "packages/lint"
+  },
+  "homepage": "https://github.com/Lolner95/AIGX/tree/main/packages/lint#readme",
+  "bugs": {
+    "url": "https://github.com/Lolner95/AIGX/issues"
+  }
+}

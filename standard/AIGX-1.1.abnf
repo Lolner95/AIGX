@@ -1,0 +1,137 @@
+; AIGX — AI Genome Exchange
+; Formal grammar for the AIGX surface syntax, version 1.1
+;
+; Notation: ABNF per RFC 5234 (with the core rules in Appendix B of that RFC:
+;   ALPHA, DIGIT, HTAB, SP, CR, LF, DQUOTE).
+;
+; SCOPE. This grammar describes the syntax a CONFORMING WRITER produces (AIGX-1.1.md §13).
+; A conforming READER is REQUIRED only to tolerate minor ill-formedness and recover
+; (AIGX-1.1.md §8.1, §14 R4); it is NOT required to reject input that fails this grammar.
+; Schema validation against this grammar is OPTIONAL and is not a condition of conformance.
+;
+; A genome file is one of the document productions below, by file-name stem:
+;   protocol.aigx     -> protocol-doc
+;   product.aigx      -> product-doc
+;   files.aigx        -> files-doc
+;   <concern>.aigx    -> concern-doc
+;   <key>.aigx        -> domain-doc
+
+; ─────────────────────────────────────────────────────────────────────────────
+; Top-level documents
+; ─────────────────────────────────────────────────────────────────────────────
+
+genome-file   = *misc ( protocol-doc
+                      / product-doc
+                      / files-doc
+                      / concern-doc
+                      / domain-doc ) *misc
+
+misc          = comment / s          ; whitespace or comments, ignored (§8.4)
+
+; ── protocol.aigx ──
+protocol-doc  = "<aigx-protocol" *attribute ">" *misc
+                  read-first
+                  *( step / misc )
+                "</aigx-protocol>"
+
+read-first    = "<read-first>" text "</read-first>"
+step          = "<step" *attribute ">" text "</step>"
+
+; ── product.aigx ──
+product-doc   = "<aigx-product" *attribute ">" *misc
+                  *( product-child / misc )
+                "</aigx-product>"
+product-child = "<" prod-name ">" text "</" prod-name ">"
+prod-name     = "name" / "standard" / "freshness" / "stack"
+
+; ── <concern>.aigx ──
+concern-doc   = "<aigx-" concern ">" *misc
+                  1*( rule / misc )
+                "</aigx-" concern ">"
+concern       = 1*name-char       ; e.g. "architecture", "data", "auth", "engineering"
+rule          = "<rule" sp "id=" DQUOTE rule-id DQUOTE *attribute ">" text "</rule>"
+
+; ── files.aigx ──  (the keystone, §10)
+files-doc     = "<aigx-files>" *misc
+                  1*( file-entry / misc )
+                "</aigx-files>"
+file-entry    = "<file" sp "path=" DQUOTE path DQUOTE [ sp "domain=" DQUOTE domain DQUOTE ]
+                  *attribute ">" *misc
+                  [ role  *misc ]
+                  [ forbid *misc ]
+                  [ gotcha *misc ]
+                  [ check  *misc ]
+                "</file>"
+role          = "<role>" text "</role>"
+forbid        = "<forbid" [ sp pri-attr ] ">" text "</forbid>"
+gotcha        = "<gotcha" [ sp pri-attr ] ">" text "</gotcha>"
+check         = "<check>" check-body "</check>"
+check-body    = ( 1*( rule-id *( 1*SP rule-id ) ) )   ; space-separated rule ids
+              / 1*( c-element / s )                    ; OR nested <c id="…"> gloss form
+c-element     = "<c" sp "id=" DQUOTE rule-id DQUOTE ">" text "</c>"
+
+; ── <key>.aigx domain card ──
+domain-doc    = "<aigx-domain" sp "key=" DQUOTE domain DQUOTE
+                  [ sp "path=" DQUOTE path DQUOTE ] *attribute ">" *misc
+                  *( domain-child / facts / misc )
+                "</aigx-domain>"
+domain-child  = "<" dom-name ">" text "</" dom-name ">"
+dom-name      = "purpose" / "public_api" / "test" / "blast"
+facts         = "<facts>" *misc 1*( fact / misc ) "</facts>"
+fact          = "<fact>" text "</fact>"
+
+; ─────────────────────────────────────────────────────────────────────────────
+; Identifiers and lexical tokens
+; ─────────────────────────────────────────────────────────────────────────────
+
+; Rule id: PREFIX "-" SLUG  (§9). SLUG is numeric or semantic kebab-case.
+rule-id       = prefix "-" slug
+prefix        = 1*(ALPHA / DIGIT)            ; conventionally uppercase concern name
+slug          = 1*(ALPHA / DIGIT / "-")      ; matches [A-Za-z0-9-]+
+
+; A repo-root-relative path (§5.2). MUST NOT escape the root (§16); a "../" segment
+; is syntactically expressible here but a conforming validator MUST reject it.
+path          = path-seg *( "/" path-seg )
+path-seg      = 1*path-char
+path-char     = %x20-21 / %x23-2E / %x30-3B / %x3D / %x3F-7E
+                ; printable, excluding DQUOTE (22), "<" (3C), ">" (3E)
+
+domain        = 1*name-char
+pri-attr      = "pri=" DQUOTE pri-value DQUOTE
+pri-value     = "CRIT" / 1*name-char          ; "CRIT" is the validated uniform level (§10.3)
+
+; ─────────────────────────────────────────────────────────────────────────────
+; Generic markup primitives
+; ─────────────────────────────────────────────────────────────────────────────
+
+attribute     = sp attr-name "=" DQUOTE attr-value DQUOTE
+attr-name     = 1*name-char
+attr-value    = *( attr-char / escape )
+attr-char     = %x20-21 / %x23-25 / %x27-3B / %x3D / %x3F-7E   ; excludes DQUOTE, "<", "&"
+
+name-char     = ALPHA / DIGIT / "-" / "_" / "."
+
+; Element text: any run of characters and escapes up to the next "<".
+; "<" and "&" SHOULD be escaped (§8.3); a reader tolerates unescaped "&" (§14 R4).
+text          = *( t-char / escape )
+t-char        = %x09 / %x0A / %x0D / %x20-25 / %x27-3B / %x3D / %x3F-7E  ; excludes "<" (3C), ">" (3E)
+escape        = "&lt;" / "&gt;" / "&amp;" / "&quot;" / "&apos;"
+              / "&#" 1*DIGIT ";" / "&#x" 1*HEXDIG ";"
+
+comment       = "<!--" *( %x09 / %x0A / %x0D / %x20-7E )  "-->"
+                ; per XML, the literal "--" MUST NOT appear inside; not enforced here
+
+; Whitespace
+s             = 1*( SP / HTAB / CR / LF )
+sp            = 1*( SP / HTAB / CR / LF )
+
+; ── Core rules (RFC 5234 Appendix B.1), reproduced for self-containedness ──
+ALPHA         = %x41-5A / %x61-7A
+DIGIT         = %x30-39
+HEXDIG        = DIGIT / "A" / "B" / "C" / "D" / "E" / "F"
+                     / "a" / "b" / "c" / "d" / "e" / "f"
+SP            = %x20
+HTAB          = %x09
+CR            = %x0D
+LF            = %x0A
+DQUOTE        = %x22

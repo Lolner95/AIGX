@@ -1,6 +1,11 @@
 # AIGX Specification - v1.1
 
-**Status:** Stable · **Version:** 1.1 · **License:** MIT · **Last updated:** 2026-06-15
+**Status:** Stable · **Version:** 1.1 · **License:** CC-BY-4.0 (spec) / MIT (tools) · **Last updated:** 2026-06-20
+
+> **This is the informal, example-led specification.** The **normative** standard — with RFC 2119
+> conformance language, a formal ABNF grammar, a JSON schema, the IANA media-type registration, and the
+> security/conformance/interoperability/change-control documents — lives in
+> [`standard/AIGX-1.1.md`](standard/AIGX-1.1.md). Where the two differ, the `standard/` directory governs.
 
 > **v1.1 adds [§8 Scaling](#8-scaling-to-large-repositories--monorepos)** - hierarchical (sharded)
 > genomes and per-file resolution - so the format bounds context cost on large repositories and monorepos.

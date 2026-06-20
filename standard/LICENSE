@@ -1,0 +1,46 @@
+AIGX Specification — License
+SPDX-License-Identifier: CC-BY-4.0
+
+The AIGX specification text in this `standard/` directory (and the informal SPEC.md at
+the repository root) is licensed under the Creative Commons Attribution 4.0 International
+License ("CC BY 4.0").
+
+  Copyright (c) 2026 Grégory Parisotto
+
+You are free to:
+
+  - Share — copy and redistribute the material in any medium or format
+  - Adapt — remix, transform, and build upon the material for any purpose,
+    even commercially
+
+Under the following term:
+
+  - Attribution — You must give appropriate credit, provide a link to this
+    license, and indicate if changes were made. You may do so in any reasonable
+    manner, but not in any way that suggests the licensor endorses you or your use.
+
+No additional restrictions — You may not apply legal terms or technological
+measures that legally restrict others from doing anything the license permits.
+
+Suggested attribution:
+
+  "AIGX — AI Genome Exchange" by Grégory Parisotto, licensed under CC BY 4.0.
+  https://github.com/Lolner95/AIGX
+
+The full legal code of CC BY 4.0 is available at:
+
+  https://creativecommons.org/licenses/by/4.0/legalcode
+
+------------------------------------------------------------------------------
+NOTE ON SCOPE
+
+This CC-BY-4.0 license applies to the SPECIFICATION TEXT (the prose, grammar,
+schema, and registration documents that define the format).
+
+The reference TOOLS and source code in this repository (the `aigx` CLI,
+tools/aigx-lint, tools/aigx-sync, bin/create-aigx, the packages/ directory, and
+all other code) are licensed separately under the MIT License — see the LICENSE
+file at the repository root.
+
+Open specification + permissive tools is a deliberate choice: anyone may
+reimplement AIGX in any language without restriction.

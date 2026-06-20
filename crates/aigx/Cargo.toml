@@ -1,0 +1,22 @@
+[package]
+name = "aigx"
+version = "1.2.0"
+edition = "2021"
+rust-version = "1.70"
+description = "The AIGX (AI Genome Exchange) CLI — validate, resolve, and scaffold a codebase's AI-agent genome. Zero dependencies (std only)."
+license = "MIT"
+repository = "https://github.com/Lolner95/AIGX"
+homepage = "https://github.com/Lolner95/AIGX"
+documentation = "https://github.com/Lolner95/AIGX/blob/main/standard/AIGX-1.1.md"
+readme = "README.md"
+keywords = ["aigx", "ai", "agents", "context", "lint"]
+categories = ["command-line-utilities", "development-tools"]
+
+[[bin]]
+name = "aigx"
+path = "src/main.rs"
+
+[profile.release]
+opt-level = "z"
+lto = true
+strip = true

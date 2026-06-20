@@ -33,6 +33,18 @@ python tools/aigx-lint/aigx_lint.py --resolve src/features/meetings/bookMeeting.
 #   </file>
 ```
 
+For MCP servers, editor extensions, and pre-prompt wrappers, prefer `--format json` so the integration can
+consume stable fields without scraping XML:
+
+```bash
+python tools/aigx-lint/aigx_lint.py --resolve src/features/meetings/bookMeeting.ts --root . --format json
+```
+
+The JSON includes `found`, `path`, `domain`, `role`, `forbid`, `gotcha`, `checks`, and the original
+`block`. If the file exists but has no `<file>` entry yet, the command still exits `0` with
+`found: false`; that lets an agent continue with general caution while a CI validator or authoring task
+can later decide whether the file deserves a boundary entry.
+
 ---
 
 ## Pattern 1: MCP tool integration
@@ -66,7 +78,7 @@ import subprocess, json, sys
 
 def handle_aigx_resolve(path: str, repo_root: str) -> str:
     result = subprocess.run(
-        ["python", "tools/aigx-lint/aigx_lint.py", "--resolve", path, "--root", repo_root],
+        ["python", "tools/aigx-lint/aigx_lint.py", "--resolve", path, "--root", repo_root, "--format", "json"],
         capture_output=True, text=True
     )
     if result.returncode != 0:
@@ -145,3 +157,32 @@ JIT hydration handles *reading* correctly under latency pressure.
 [aigx-sync](../tools/aigx-sync/) handles *writing* correctly when files move.
 Both are environment-level fixes for environment-level failure modes; the spec (genome format) is
 unchanged by either.
+
+---
+
+## Relationship to code graph memory
+
+Projects such as `codebase-memory-mcp` show the strongest companion pattern for AIGX: keep a persistent
+local graph of symbols, calls, imports, routes, and changed-file impact, then hydrate the agent with
+targeted graph answers before it reads large swaths of the repo.
+
+Use the two systems for different jobs:
+
+| Question | Best source |
+|---|---|
+| "What rule is binding for this exact file?" | AIGX `aigx_resolve` |
+| "What calls this function?" | Code graph / memory MCP |
+| "Which files are risky after this diff?" | Code graph impact analysis, then AIGX per-file checks |
+| "May this file import that internal module?" | AIGX `<forbid>` plus graph import edges |
+| "Which docs or facts are authoritative?" | AIGX concern/domain files |
+
+The recommended order is:
+
+1. Resolve the AIGX boundary for every file the agent may edit.
+2. Ask the graph memory for structural neighbors only as needed: callers, imports, routes, or impact.
+3. Inject a compact packet: the AIGX boundary first, then graph facts with file/line references.
+4. After editing, run `aigx-lint --root .` and any project tests; if graph memory is enabled, refresh its
+   index or let its watcher pick up the change.
+
+Do not copy a graph dump into `.aigx/`. AIGX stays sparse and normative; graph memory stays derived and
+regenerable.

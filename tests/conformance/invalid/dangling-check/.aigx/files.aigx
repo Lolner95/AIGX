@@ -1,0 +1,6 @@
+<aigx-files>
+  <file path="src/foo.ts" domain="core">
+    <role>Its check id resolves to no rule</role>
+    <check>NOPE-does-not-exist</check>
+  </file>
+</aigx-files>

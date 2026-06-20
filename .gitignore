@@ -18,5 +18,13 @@ dist/
 *.tgz
 package-lock.json
 
+# Rust build output (Cargo.lock is committed for the binary crate)
+target/
+
+# Python build artifacts
+*.egg-info/
+__pycache__/
+*.pyc
+
 # Generated documentation site
 site/

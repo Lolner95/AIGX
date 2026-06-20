@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Lolner95/AIGX/standard/AIGX-1.1.schema.json",
+  "title": "AIGX Genome — canonical JSON data model (v1.1)",
+  "description": "The canonical JSON representation of an AIGX genome, as produced by a conforming parser or by `aigx lint --format json` / `aigx-lint --format json`. AIGX files on disk are XML-style text (see AIGX-1.1.abnf); this schema describes the DATA MODEL a tool extracts from them, not the on-disk syntax. Validating a genome against this schema is OPTIONAL and is not a condition of conformance (conformance is defined in AIGX-1.1.md §13–§15).",
+  "type": "object",
+  "required": ["aigxVersion", "genomes"],
+  "additionalProperties": false,
+  "properties": {
+    "aigxVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$",
+      "description": "The AIGX specification version this model targets, e.g. \"1.1\"."
+    },
+    "root": {
+      "type": "string",
+      "description": "Absolute or repo-relative path of the repository root the genomes were resolved against."
+    },
+    "genomes": {
+      "type": "array",
+      "minItems": 1,
+      "description": "One entry per discovered .aigx/ directory. A single-element array is the common (non-monorepo) case; multiple elements model a hierarchical/sharded layout (AIGX-1.1.md §5.2).",
+      "items": { "$ref": "#/$defs/genome" }
+    }
+  },
+  "$defs": {
+    "genome": {
+      "type": "object",
+      "required": ["dir", "rules", "files"],
+      "additionalProperties": false,
+      "properties": {
+        "dir": {
+          "type": "string",
+          "description": "Repo-relative path of this genome's .aigx/ directory."
+        },
+        "protocol": {
+          "type": ["object", "null"],
+          "description": "The parsed protocol.aigx, if present.",
+          "additionalProperties": false,
+          "properties": {
+            "version": { "type": ["string", "null"], "pattern": "^[0-9]+\\.[0-9]+$" },
+            "readFirst": { "type": ["string", "null"] },
+            "steps": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "product": {
+          "type": ["object", "null"],
+          "description": "The parsed product.aigx, if present.",
+          "additionalProperties": false,
+          "properties": {
+            "name": { "type": ["string", "null"] },
+            "standard": { "type": ["string", "null"] },
+            "freshness": { "type": ["string", "null"] },
+            "stack": { "type": ["string", "null"] }
+          }
+        },
+        "rules": {
+          "type": "array",
+          "description": "All rules declared in this genome's concern files.",
+          "items": { "$ref": "#/$defs/rule" }
+        },
+        "files": {
+          "type": "array",
+          "description": "All <file> entries in this genome's files.aigx (the per-file boundary index).",
+          "items": { "$ref": "#/$defs/fileEntry" }
+        },
+        "domainCards": {
+          "type": "array",
+          "description": "Parsed domain cards (<key>.aigx) colocated with source folders.",
+          "items": { "$ref": "#/$defs/domainCard" }
+        }
+      }
+    },
+
+    "rule": {
+      "type": "object",
+      "required": ["id", "concern", "text"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9]+-[A-Za-z0-9-]+$",
+          "description": "Stable rule identifier PREFIX-SLUG (AIGX-1.1.md §9). MUST be unique within a genome."
+        },
+        "concern": {
+          "type": "string",
+          "description": "The concern this rule belongs to, derived from the <aigx-CONCERN> root element (e.g. \"architecture\")."
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The authoritative, complete rule text."
+        }
+      }
+    },
+
+    "fileEntry": {
+      "type": "object",
+      "required": ["path", "checks"],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Repo-root-relative path of the file (AIGX-1.1.md §5.2, §10.1). MUST NOT escape the repository root.",
+          "not": { "pattern": "(^|/)\\.\\.(/|$)" }
+        },
+        "domain": {
+          "type": ["string", "null"],
+          "description": "The domain/feature key this file belongs to (optional)."
+        },
+        "role": {
+          "type": ["string", "null"],
+          "description": "One line: what this file is for."
+        },
+        "forbid": { "$ref": "#/$defs/boundary" },
+        "gotcha": { "$ref": "#/$defs/boundary" },
+        "checks": {
+          "type": "array",
+          "description": "Rule ids the consumer MUST verify before finishing an edit to this file. Each MUST resolve to a rule id in the applicable genome (validator rule V2).",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9]+-[A-Za-z0-9-]+$"
+          }
+        }
+      }
+    },
+
+    "boundary": {
+      "type": ["object", "null"],
+      "description": "A <forbid> or <gotcha>: prose plus an optional salience level.",
+      "additionalProperties": false,
+      "properties": {
+        "priority": {
+          "type": ["string", "null"],
+          "description": "The pri attribute. The validated uniform level is \"CRIT\"; null means normal priority (AIGX-1.1.md §10.3)."
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": ["text"]
+    },
+
+    "domainCard": {
+      "type": "object",
+      "required": ["key"],
+      "additionalProperties": false,
+      "properties": {
+        "key": { "type": "string", "description": "The domain key (matches fileEntry.domain)." },
+        "path": { "type": ["string", "null"], "description": "The source folder this card describes." },
+        "purpose": { "type": ["string", "null"] },
+        "publicApi": { "type": ["string", "null"] },
+        "test": { "type": ["string", "null"] },
+        "blast": { "type": ["string", "null"] },
+        "facts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["text"],
+            "additionalProperties": false,
+            "properties": {
+              "text": { "type": "string" },
+              "ruleId": {
+                "type": ["string", "null"],
+                "description": "The rule id this fact enforces, if tagged.",
+                "pattern": "^[A-Za-z0-9]+-[A-Za-z0-9-]+$"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

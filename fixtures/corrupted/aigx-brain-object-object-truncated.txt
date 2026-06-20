@@ -1,0 +1,7 @@
+# AIGX Brain Export
+
+## Phase 7: ATLAS
+
+[object Object]
+
+This fixture represents a corrupted export that died before its required closing root/section.

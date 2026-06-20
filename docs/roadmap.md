@@ -19,7 +19,9 @@ teams whose tools only read flat files can still benefit from an AIGX genome as 
 
 Exporters are semantics-preserving projections (per [SPEC.md §5](../SPEC.md#5-semantic-parity-for-tools-that-transform-genomes)): all rule ids and file boundaries survive the transform.
 
-**Status:** not started. Contribution welcome - see [CONTRIBUTING.md](../CONTRIBUTING.md).
+**Status:** safe serializer foundation shipped in [`tools/aigx-export`](../tools/aigx-export/): explicit
+renderers, corruption guards, atomic write, and SHA-256 readback. Format-specific projections to
+`AGENTS.md`, `CLAUDE.md`, and Cursor rules remain planned.
 
 ---
 
@@ -65,14 +67,15 @@ numbers whether you confirm or challenge the result.
 **Goal:** expose `aigx-lint --resolve <path>` as an MCP tool so AI agents using the Model Context
 Protocol can call it directly for O(1) per-file resolution without loading a whole index.
 
-**Status:** design exploration.
+**Status:** minimal stdio bridge shipped in [`tools/aigx-mcp`](../tools/aigx-mcp/). Future work: package
+installer snippets for specific MCP clients and optional pre-tool hooks that call `aigx_resolve`
+automatically when an edit target is known.
 
 ---
 
 ## aigx-lint improvements
 
 - `--watch` mode: re-validate on file change (local dev ergonomics)
-- JSON output (`--format json`) for downstream tooling
 - Autofix suggestions for common errors (moved-file rename, dangling check id)
 
-**Status:** planned.
+**Status:** JSON output shipped; watch mode and autofix suggestions remain planned.

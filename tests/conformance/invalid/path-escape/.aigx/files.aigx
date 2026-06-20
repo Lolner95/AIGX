@@ -1,0 +1,6 @@
+<aigx-files>
+  <file path="../secret.txt" domain="core">
+    <role>Path escapes the repository root</role>
+    <check>ARCH-no-deep-imports</check>
+  </file>
+</aigx-files>

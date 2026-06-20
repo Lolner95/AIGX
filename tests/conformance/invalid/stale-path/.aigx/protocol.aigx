@@ -1,0 +1,5 @@
+<aigx-protocol version="1.1">
+  <read-first>For EACH file you edit, find its &lt;file&gt; entry in .aigx/files.aigx; obey its &lt;forbid&gt; and verify every id in its &lt;check&gt; before finishing.</read-first>
+  <step n="1">Read the concern files your task touches.</step>
+  <step n="2">Read .aigx/files.aigx for each file you edit.</step>
+</aigx-protocol>

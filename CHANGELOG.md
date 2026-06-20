@@ -5,7 +5,32 @@ All notable changes to the AIGX specification and repository are documented here
 
 ## [Unreleased]
 
-### Spec
+### Planned
+- VS Code extension — hover a source file, see its `.aigx` boundary inline
+- Monorepo-scale benchmark (5k+ files) — specification is in place, measurement is future work
+- Additional worked examples: Python (FastAPI), Go, monorepo
+- Publish the package ecosystem to npm / PyPI / Cargo
+
+---
+
+## [1.2.0] - 2026-06-20
+
+Standardization release. AIGX becomes a citable standard (the `standard/` directory), gains a real CLI
+(`aigx`) and an npm package ecosystem (`aigx`, `@aigx/parser`, `@aigx/lint`), and ships plug-and-play agent
+integrations. The spec version stays **1.1**; this is a tooling and repository release.
+
+### Spec & standard
+- **`standard/` directory** — the normative standard set: [`AIGX-1.1.md`](standard/AIGX-1.1.md) (20-section
+  normative specification in RFC 2119 language), [`AIGX-1.1.abnf`](standard/AIGX-1.1.abnf) (formal grammar,
+  RFC 5234), [`AIGX-1.1.schema.json`](standard/AIGX-1.1.schema.json) (canonical JSON data model, JSON Schema
+  2020-12), [`media-type-registration.md`](standard/media-type-registration.md) (IANA template for
+  `application/aigx`), and the security / conformance / interoperability / change-control documents.
+- **Dual licensing** — specification text under CC-BY-4.0 ([`standard/LICENSE`](standard/LICENSE)); the
+  reference tools remain MIT. Open spec + permissive tools, so AIGX can be reimplemented freely.
+- **Media type** — `application/aigx` (UTF-8), deliberately not `+xml` (AIGX does not mandate strict XML
+  well-formedness).
+
+### Spec (informal)
 - **§2 Semantic rule ids** ([SPEC.md](SPEC.md#2-file-naming-and-rule-ids)): ids can now be
   `PREFIX-slug` (e.g. `ARCH-no-deep-imports`) in addition to `PREFIX-N`. Semantic slugs are
   recommended for new genomes — `<check>` lists become self-documenting. Fully backward-compatible.
@@ -14,6 +39,32 @@ All notable changes to the AIGX specification and repository are documented here
   not a required format change.
 
 ### Tooling
+- **`aigx` CLI** ([packages/aigx](packages/aigx/)): the flagship command-line tool. Zero-dependency,
+  self-contained Node (templates embedded). Commands: `init`, `lint`, `resolve`, `doctor`, `format`,
+  `check-conformance`. `npm i -g aigx` or `npx aigx`. Supports `.aigxignore` / `--exclude` for nested
+  independent genomes.
+- **`@aigx/parser`** ([packages/parser](packages/parser/)): the reference zero-dependency genome parser;
+  text-in/data-out functions whose output matches the canonical JSON schema.
+- **`@aigx/lint`** ([packages/lint](packages/lint/)): programmatic validator built on `@aigx/parser`,
+  implementing conformance checks V1–V7. Kept in parity with the Python `aigx-lint`.
+- **`aigx` (Rust crate)** ([crates/aigx](crates/aigx/)): `cargo install aigx` — a std-only (zero external
+  crates) Rust reference validator/CLI (`lint`, `resolve`, `init`). A third independent implementation,
+  held in agreement with the Node and Python validators by the conformance suite.
+- **`aigx` (PyPI)** ([pyproject.toml](pyproject.toml)): `pip install aigx` ships the Python reference
+  validator as the `aigx` / `aigx-lint` commands.
+- **Python validator parity** ([tools/aigx-lint](tools/aigx-lint/)): `aigx-lint` upgraded to full V1–V7 +
+  S2 coverage (required files, duplicate rule ids, path-escape) and now honors `.aigxignore` / `--exclude`,
+  so it reports the same pass/fail as the Node and Rust validators. Subcommand aliases (`aigx lint`,
+  `aigx resolve PATH`) added for cross-CLI consistency. Version bumped to 1.2.0.
+- **`aigx-lint --format json`** ([tools/aigx-lint](tools/aigx-lint/)): machine-readable validate,
+  stats, and per-file resolution output for MCP servers, editor extensions, and agent wrappers. `--resolve`
+  now exits 0 for existing files that simply have no indexed boundary entry, and XML comments are ignored
+  during rule and file-entry parsing per SPEC Â§7.
+- **`aigx-mcp`** ([tools/aigx-mcp](tools/aigx-mcp/)): zero-dependency stdio MCP bridge exposing
+  `aigx_resolve`, so MCP clients can inject AIGX boundaries before graph/search context.
+- **`aigx-export`** ([tools/aigx-export](tools/aigx-export/)): zero-dependency reference serializer with
+  explicit renderers, recursive unsafe-value detection, corruption-token output validation, atomic writes,
+  SHA-256 readback verification, and handoff guard support for `.aigx` and Markdown exports.
 - **`aigx-sync`** ([tools/aigx-sync](tools/aigx-sync/)): zero-dependency git pre-commit hook that
   auto-patches `files.aigx` path attributes when source files are renamed or moved. Drift becomes
   physically impossible at the commit boundary.
@@ -27,8 +78,13 @@ All notable changes to the AIGX specification and repository are documented here
   `create-aigx` automatically.
 
 ### Docs
+- **[docs/aigx-in-60-seconds.md](docs/aigx-in-60-seconds.md)**: the one-screen overview — the minimum
+  valid genome, a tiny example, and how an agent uses it.
 - **[docs/jit-hydration.md](docs/jit-hydration.md)**: full JIT hydration guide with MCP tool
-  definition, Python pre-prompt injection code, editor extension pattern, and when NOT to use it.
+  definition, JSON resolver output, Python pre-prompt injection code, editor extension pattern, how AIGX
+  pairs with code graph memory, and when NOT to use it.
+- **[fixtures/corrupted/aigx-brain-object-object-truncated.txt](fixtures/corrupted/aigx-brain-object-object-truncated.txt)**:
+  regression fixture for object-coercion/truncation export guards.
 - **[docs/limitations.md](docs/limitations.md)** §6 expanded: point-by-point responses to the
   three developer critiques (stale sidecars → `aigx-sync`, opaque ids → semantic slugs, N+1 reads →
   JIT hydration) plus `agent.aigx` for genome self-maintenance.
@@ -50,11 +106,22 @@ All notable changes to the AIGX specification and repository are documented here
   integrations. Zero new dependencies.
 - **README** quick-start updated to lead with `npx create-aigx`; tool support table updated with links
   to `integrations/`; repo layout updated to reflect new directories.
+- **`packages/` workspace**: npm workspaces (`aigx`, `@aigx/parser`, `@aigx/lint`) under one root.
+- **`.aigxignore`**: repo-relative exclude list so nested independent genomes (the examples, the site) are
+  validated separately rather than as shards of the root genome.
+- **Example fixtures**: `examples/minimal` and `examples/sourcing-app` now ship the source files their
+  genomes reference, so they pass *real* `aigx lint` (not just `--stats`) and serve as conformance fixtures.
+- **CI**: [validate-genome.yml](.github/workflows/validate-genome.yml) now runs real validation with the
+  `aigx` CLI (meta-genome + each example + conformance + format check) and a Python-validator parity job.
+- **Meta-genome** extended to index the new CLI, packages, `standard/AIGX-1.1.md`, the Rust crate, the
+  conformance runner, and `pyproject.toml`, with rules for CLI self-containment, package/crate
+  zero-dependency, validator parity, standard governance, and the conformance suite.
 
-### Planned
-- VS Code extension — hover a source file, see its `.aigx` boundary inline
-- Monorepo-scale benchmark (5k+ files) - specification is in place, measurement is future work
-- Additional worked examples: Python (FastAPI), Go, monorepo
+### Conformance
+- **Conformance suite** ([tests/conformance/](tests/conformance/)): a positive baseline plus five negative
+  fixtures (one per V1/V2/V3/V4/S2), and a `run.py` runner that drives the Python, Node, and Rust
+  validators and asserts all three agree, fixture-for-fixture ([standard/conformance.md](standard/conformance.md)).
+  Three independent implementations in three languages, one verdict. Wired into CI.
 
 ---
 
@@ -101,6 +168,7 @@ The first public release of AIGX (AI Genome Exchange).
 - A complete worked example (`examples/sourcing-app/`) and copy-ready starter templates.
 - `llms.txt`, `CITATION.cff`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, MIT `LICENSE`.
 
-[Unreleased]: https://github.com/Lolner95/AIGX/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/Lolner95/AIGX/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/Lolner95/AIGX/releases/tag/v1.2.0
 [1.1.0]: https://github.com/Lolner95/AIGX/releases/tag/v1.1.0
 [1.0.0]: https://github.com/Lolner95/AIGX/releases/tag/v1.0.0

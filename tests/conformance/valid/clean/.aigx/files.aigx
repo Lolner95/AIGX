@@ -1,0 +1,6 @@
+<aigx-files>
+  <file path="src/foo.ts" domain="core">
+    <role>Example file — the smallest clean genome</role>
+    <check>ARCH-no-deep-imports</check>
+  </file>
+</aigx-files>

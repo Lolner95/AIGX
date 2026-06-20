@@ -1,0 +1,6 @@
+<aigx-files>
+  <file path="src/foo.ts" domain="core">
+    <role>The genome declares ARCH-dup twice</role>
+    <check>ARCH-dup</check>
+  </file>
+</aigx-files>

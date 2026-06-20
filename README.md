@@ -34,7 +34,7 @@ in that benchmark it was the **only format that ranked first on *both* a weaker 
 > *any* AI agent can read to inherit how your project works. Hand an agent your genome and it behaves
 > like a senior engineer who already knows the code.
 
-<sub>Spec v1.1 · MIT licensed · Tool-agnostic · Last updated 2026-06-15</sub>
+<sub>Spec v1.1 (CC-BY-4.0) · Tools MIT · Tool-agnostic · Last updated 2026-06-20</sub>
 
 ---
 
@@ -151,8 +151,18 @@ Every agent integration is wired up. No configuration needed. Your source code i
 
 3. **`.aigx/product.aigx`** — product name, quality standard, which old docs are stale.
 
-A complete real-world genome is in **[`examples/sourcing-app/`](examples/sourcing-app/)**.
-The authoring guide walks you through it step by step: **[`docs/authoring-guide.md`](docs/authoring-guide.md)**.
+**Then validate** — with the `aigx` CLI (zero-dependency). Install from whichever registry you live in —
+`npm i -g aigx` (or `npx aigx`), `pip install aigx`, or `cargo install aigx`:
+
+```bash
+aigx lint                                  # required files, resolving checks, no stale paths
+aigx resolve src/features/meetings/bookMeeting.ts   # show one file's boundary
+aigx check-conformance                     # report your genome's conformance level
+```
+
+A complete real-world genome is in **[`examples/sourcing-app/`](examples/sourcing-app/)**, the one-screen
+overview is **[`docs/aigx-in-60-seconds.md`](docs/aigx-in-60-seconds.md)**, and the authoring guide walks
+you through it step by step: **[`docs/authoring-guide.md`](docs/authoring-guide.md)**.
 
 ---
 
@@ -257,6 +267,10 @@ Seven findings, each backed by the benchmark ([deep dive](docs/principles.md)):
 > **[`aigx-sync`](tools/aigx-sync/)** — git pre-commit hook that auto-patches `files.aigx` when files
 > are renamed, so drift is physically impossible at the commit boundary.
 
+> For MCP clients and codebase-memory-style agents, use
+> `python tools/aigx-lint/aigx_lint.py --resolve <path> --root . --format json` to inject the binding
+> AIGX boundary before graph/search context. See [JIT Context Hydration](docs/jit-hydration.md).
+
 ---
 
 ## FAQ
@@ -305,15 +319,26 @@ Yes - it's MIT. Use it, fork it, build products on it, no permission needed.
 aigx/
 ├── .aigx/               ← this repo's own genome (AIGX uses AIGX)
 ├── README.md            ← you are here
-├── SPEC.md              ← normative format specification (v1.1)
+├── SPEC.md              ← informal, example-led specification (points to standard/)
+├── standard/            ← the NORMATIVE standard (cite this)
+│   ├── AIGX-1.1.md      ← normative spec, RFC 2119, 20 sections
+│   ├── AIGX-1.1.abnf    ← formal grammar (RFC 5234)
+│   ├── AIGX-1.1.schema.json  ← canonical JSON data model
+│   ├── media-type-registration.md  ← IANA application/aigx
+│   └── security · conformance · interoperability · change-control
 ├── BENCHMARK.md         ← full method, results, raw data, challenger log
 ├── CHANGELOG.md         ← version history
 ├── CONTRIBUTING.md      ← how to contribute
 ├── CITATION.cff         ← citation metadata
-├── LICENSE              ← MIT
+├── LICENSE              ← MIT (tools) · standard/LICENSE ← CC-BY-4.0 (spec)
 ├── llms.txt             ← machine-readable index for AI answer engines
+├── pyproject.toml       ← PyPI packaging: pip install aigx (Python reference validator)
 ├── bin/
 │   └── create-aigx.mjs  ← npx create-aigx — scaffolds genome + all integrations
+├── packages/            ← npm workspace
+│   ├── aigx/            ← the `aigx` CLI (init/lint/resolve/doctor/format/conformance)
+│   ├── parser/          ← @aigx/parser — reference zero-dep parser
+│   └── lint/            ← @aigx/lint — programmatic validator
 ├── docs/
 │   ├── concept.md       ← the genome philosophy
 │   ├── authoring-guide.md
@@ -323,9 +348,10 @@ aigx/
 │   ├── jit-hydration.md ← JIT context hydration pattern (MCP, CI, editor)
 │   ├── glossary.md
 │   ├── roadmap.md
+│   ├── aigx-in-60-seconds.md  ← the one-screen overview
 │   └── faq.md
 ├── examples/
-│   ├── sourcing-app/    ← complete real-world genome (.aigx/ + domain cards)
+│   ├── sourcing-app/    ← complete real-world genome (conformance fixture, Level 2)
 │   └── minimal/         ← smallest valid genome (3 files, 1 rule, 1 entry)
 ├── integrations/        ← plug-and-play config for every AI coding agent
 │   ├── cursor/          ← .cursor/rules/aigx.mdc
@@ -340,8 +366,14 @@ aigx/
 ├── template/            ← npm package source (read by create-aigx)
 │   ├── aigx/            ← .aigx/ files
 │   └── integrations/    ← integration templates
+├── crates/
+│   └── aigx/            ← Cargo: cargo install aigx — Rust reference validator (std-only)
+├── tests/
+│   └── conformance/     ← cross-validator conformance suite (run.py + fixtures)
 └── tools/
-    ├── aigx-lint/       ← zero-dep validator + per-file resolver (CI-ready)
+    ├── aigx-lint/       ← zero-dep Python validator + per-file resolver (CI-ready)
+    ├── aigx-mcp/        ← stdio MCP bridge exposing aigx_resolve
+    ├── aigx-export/     ← safe .aigx / Markdown serializer (corruption guards)
     └── aigx-sync/       ← git pre-commit hook: auto-patches files.aigx on renames
 ```
 
@@ -349,11 +381,17 @@ aigx/
 
 ## Status & roadmap
 
-- ✅ **Spec v1.1** — stable, normative; hierarchical/monorepo scaling included ([SPEC.md](SPEC.md))
+- ✅ **Spec v1.1** — stable; **normative standard** with ABNF, JSON schema & IANA media type ([standard/](standard/))
 - ✅ **Benchmark** — n=60 on two models, reproducible, honest [scope & limitations](docs/limitations.md)
+- ✅ **`aigx` CLI** — init / lint / resolve / doctor / format / check-conformance. Zero-dep. ([packages/aigx](packages/aigx/))
+- ✅ **`@aigx/parser` + `@aigx/lint`** — programmatic parsing & validation ([packages/](packages/))
+- ✅ **`pip install aigx` + `cargo install aigx`** — Python and Rust reference validators (three implementations, one spec)
+- ✅ **Conformance suite** — Python · Node · Rust validators agree fixture-for-fixture ([tests/conformance/](tests/conformance/))
 - ✅ **`npx create-aigx`** — scaffolds genome + Cursor + Claude Code + Copilot + Windsurf + CI in one command
 - ✅ **`aigx-lint`** — validate genome in CI + O(1) per-file resolve. Zero-dep. ([tools/aigx-lint](tools/aigx-lint/))
 - ✅ **`aigx-sync`** — git hook auto-patches `files.aigx` on renames ([tools/aigx-sync](tools/aigx-sync/))
+- ✅ **`aigx-mcp`** — stdio MCP bridge exposing `aigx_resolve` for JIT context hydration ([tools/aigx-mcp](tools/aigx-mcp/))
+- ✅ **`aigx-export`** — safe `.aigx` / Markdown serializer with corruption guards, atomic write, and SHA-256 readback ([tools/aigx-export](tools/aigx-export/))
 - ✅ **Integrations** — ready-to-use configs for 7 tools ([integrations/](integrations/))
 - ✅ **Meta-genome** — this repo uses AIGX to describe itself (`.aigx/`)
 - 🔜 VS Code extension — hover a file → see its `.aigx` boundary inline

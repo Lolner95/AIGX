@@ -24,9 +24,16 @@ python aigx_lint.py --root .
 # Print just one file's boundary entry - constant-cost lookup an agent/MCP can call.
 python aigx_lint.py --resolve src/features/meetings/bookMeeting.ts --root .
 
+# Machine-readable output for MCP servers, editor extensions, and agent wrappers.
+python aigx_lint.py --resolve src/features/meetings/bookMeeting.ts --root . --format json
+
 # Summary: genomes, rules, entries, and the all-important forbid scarcity.
 python aigx_lint.py --stats --root .
 ```
+
+`--resolve` returns exit code `0` when the target file exists even if the genome has no matching
+`<file>` entry; that is an informational "no boundary indexed yet" result, not a tool failure. It returns
+exit code `2` when the target path itself does not exist.
 
 ## What validation catches
 
@@ -35,6 +42,25 @@ python aigx_lint.py --stats --root .
 | `<file path>` exists on disk | catches renamed/moved/deleted files → the genome can't go stale unnoticed |
 | every `<check>` id resolves to a `<rule>` | catches dangling references when a rule is renamed/removed |
 | duplicate `<file>` entries (warning) | catches copy-paste drift across shards |
+
+## JSON shape
+
+JSON output is intentionally small and stable so MCP bridges can inject AIGX context without scraping XML:
+
+```json
+{
+  "found": true,
+  "path": "src/features/meetings/bookMeeting.ts",
+  "domain": "meetings",
+  "role": "Book a meeting (validate slot + contact)",
+  "forbid": { "priority": "CRIT", "text": "NEVER import internal suppliers modules" },
+  "gotcha": { "priority": null, "text": "Use the public suppliers API for contact email" },
+  "checks": ["ARCH-no-deep-imports", "DATA-integer-cents"],
+  "block": "<file path=\"...\">...</file>"
+}
+```
+
+When there is no indexed boundary for an existing file, `found` is `false` and `exists` is `true`.
 
 > Try it on [`examples/sourcing-app/`](../../examples/sourcing-app/): `--stats` and `--resolve` work
 > directly; `--validate` will (correctly!) report the `src/**` paths as missing, because that example ships

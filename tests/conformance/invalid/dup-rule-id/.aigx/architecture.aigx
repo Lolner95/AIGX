@@ -1,0 +1,4 @@
+<aigx-architecture>
+  <rule id="ARCH-dup">First definition of the id.</rule>
+  <rule id="ARCH-dup">Second definition — duplicate id, forbidden.</rule>
+</aigx-architecture>

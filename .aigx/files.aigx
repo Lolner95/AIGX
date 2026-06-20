@@ -27,6 +27,47 @@
     <check>ARCH-tools-zero-dep</check>
   </file>
 
+  <file path="tools/aigx-mcp/aigx_mcp.py" domain="tooling">
+    <role>Zero-dependency MCP stdio bridge exposing aigx_resolve for JIT boundary hydration</role>
+    <forbid pri="CRIT">NEVER add external dependencies or agent-specific behavior - keep this a portable stdio MCP bridge over aigx-lint --resolve</forbid>
+    <gotcha>MCP responses must return structured JSON from aigx-lint --format json; do not make clients scrape XML text from the tool result</gotcha>
+    <check>ARCH-tools-zero-dep</check>
+  </file>
+
+  <file path="tools/aigx-export/aigx_export.py" domain="tooling">
+    <role>Zero-dependency safe export serializer with explicit renderers, corruption guards, atomic write, and checksum readback</role>
+    <forbid pri="CRIT">NEVER hide export corruption with final-string replacement; reject malformed render values before serialization</forbid>
+    <gotcha>Every new block kind needs an explicit renderer plus tests for invalid object coercion and output validation</gotcha>
+    <check>ARCH-tools-zero-dep</check>
+  </file>
+
+  <file path="packages/aigx/bin/aigx.mjs" domain="tooling">
+    <role>The aigx CLI — init, lint, resolve, doctor, format, check-conformance. The flagship npm package (npm i -g aigx).</role>
+    <forbid pri="CRIT">NEVER add an npm dependency or read init templates from disk — the CLI must be self-contained for global install</forbid>
+    <gotcha>Its lint logic must stay in parity with tools/aigx-lint/aigx_lint.py — change both validators together, or they disagree on the same genome</gotcha>
+    <check>ARCH-cli-self-contained ARCH-validator-parity</check>
+  </file>
+
+  <file path="packages/parser/index.mjs" domain="tooling">
+    <role>@aigx/parser — the reference zero-dep genome parser; canonical text-in/data-out functions matching the JSON schema</role>
+    <forbid pri="CRIT">NEVER add an external dependency</forbid>
+    <gotcha>The output shape must match standard/AIGX-1.1.schema.json — a field rename here is a data-model change that must update the schema too</gotcha>
+    <check>ARCH-packages-zero-ext-dep</check>
+  </file>
+
+  <file path="packages/lint/index.mjs" domain="tooling">
+    <role>@aigx/lint — programmatic validator built on @aigx/parser; implements conformance checks V1–V7</role>
+    <forbid pri="CRIT">NEVER depend on anything except @aigx/parser</forbid>
+    <gotcha>Must report the same errors as the aigx CLI and tools/aigx-lint for the same genome (validator parity)</gotcha>
+    <check>ARCH-packages-zero-ext-dep ARCH-validator-parity</check>
+  </file>
+
+  <file path="standard/AIGX-1.1.md" domain="spec">
+    <role>The normative AIGX 1.1 specification — governs conformance; SPEC.md is the informal companion</role>
+    <gotcha>A normative change must also update AIGX-1.1.abnf, AIGX-1.1.schema.json, and conformance.md in the same change-set</gotcha>
+    <check>ARCH-standard-governs ARCH-no-version-in-headers</check>
+  </file>
+
   <file path="CHANGELOG.md" domain="docs">
     <role>Version history — [Unreleased] tracks in-flight work; merged to a version section on release</role>
     <gotcha>Add to [Unreleased] in the same commit as the work, not at PR merge — batch additions are vague and harder to review</gotcha>
@@ -37,6 +78,25 @@
     <role>The most complete worked example of files.aigx — the reference genome that other examples and benchmark against</role>
     <gotcha>All check ids in this file must resolve to real rules in the concern files — run aigx-lint --root examples/sourcing-app to verify before committing</gotcha>
     <check>ARCH-examples-must-pass-lint</check>
+  </file>
+
+  <file path="crates/aigx/src/main.rs" domain="tooling">
+    <role>The Rust reference validator/CLI (cargo install aigx) — lint, resolve, init; a third implementation that must agree with Node and Python</role>
+    <forbid pri="CRIT">NEVER add an external crate — std-only; the [dependencies] table stays empty</forbid>
+    <gotcha>Its lint output must match the Node and Python validators on every conformance fixture — change all three validators together</gotcha>
+    <check>ARCH-crate-std-only ARCH-validator-parity ARCH-conformance-suite</check>
+  </file>
+
+  <file path="tests/conformance/run.py" domain="tooling">
+    <role>Conformance suite runner — drives every reference validator against the fixtures and asserts they agree</role>
+    <gotcha>A new validation rule needs a matching fixture here (valid + invalid) and every validator must still agree</gotcha>
+    <check>ARCH-conformance-suite ARCH-validator-parity</check>
+  </file>
+
+  <file path="pyproject.toml" domain="tooling">
+    <role>PyPI packaging for the Python reference validator (pip install aigx → the aigx / aigx-lint commands)</role>
+    <gotcha>Ships tools/aigx-lint/aigx_lint.py as the aigx_lint module; keep its version in sync with the other packages</gotcha>
+    <check>ARCH-tools-zero-dep</check>
   </file>
 
   <file path="integrations/cursor/aigx.mdc" domain="integrations">

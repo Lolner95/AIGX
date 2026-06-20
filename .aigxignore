@@ -1,0 +1,16 @@
+# Nested genomes that are independent units, not shards of this repo's own genome.
+# Each is validated separately with its own --root (see .github/workflows/validate-genome.yml).
+
+# Example genomes: paths in their files.aigx are relative to the example's own root.
+examples
+
+# Starter template: contains TODO placeholder paths by design — not a real genome.
+templates
+
+# Generated documentation site (gitignored): a separate Astro project with its own genome.
+site
+
+# Conformance fixtures: deliberately-broken mini-genomes that MUST fail validation by design.
+# They are validated individually by tests/conformance/run.py, never as part of the repo genome.
+tests
+fixtures

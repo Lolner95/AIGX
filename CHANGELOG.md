@@ -6,10 +6,41 @@ All notable changes to the AIGX specification and repository are documented here
 ## [Unreleased]
 
 ### Planned
-- VS Code extension — hover a source file, see its `.aigx` boundary inline
+- Language Server (LSP) — the same editor intelligence in any LSP-capable editor
 - Monorepo-scale benchmark (5k+ files) — specification is in place, measurement is future work
 - Additional worked examples: Python (FastAPI), Go, monorepo
-- Publish the package ecosystem to npm / PyPI / Cargo
+- Publish the ecosystem to npm / PyPI / Cargo / the VS Code Marketplace
+
+---
+
+## [1.3.0] - 2026-06-20
+
+Editor support + a world-class adoption kit. The specification version stays **1.1**.
+
+### Editors
+- **TextMate grammar** ([editors/textmate](editors/textmate/)): the canonical `source.aigx` grammar —
+  tags, attributes, rule ids (`PREFIX-SLUG`), `pri="CRIT"`, entities, comments — reusable across VS Code,
+  GitHub Linguist, Zed, Sublime Text, TextMate, Cursor, and Windsurf.
+- **VS Code extension "AIGX Language Support"** ([editors/vscode](editors/vscode/)): syntax highlighting,
+  file icons (`.aigx` plus `protocol/files/architecture/product/testing.aigx`) and an optional icon theme,
+  snippets, tag + rule-id autocomplete, hover on rule ids, go-to rule definition, inline diagnostics
+  (matching `aigx-lint`), document formatting, and an **AIGX: Resolve current file's boundary** command.
+  Self-contained (the `vscode` API + Node + a local offset-aware genome library; no npm runtime deps).
+
+### Tooling
+- **`create-aigx` is now interactive** ([bin/create-aigx.mjs](bin/create-aigx.mjs)): pick your agent(s)
+  — Cursor, Claude Code, Copilot, Windsurf, Aider, or a generic `AGENTS.md` — choose CI, and get a gradient
+  scaffold with per-file confirmation. Non-interactive fallback + per-agent flags (`--cursor …`, `--yes`,
+  `--aigx-only`, `--no-ci`) keep `npx create-aigx` automation-friendly. Bumped to **1.3.0**.
+- **`aigx init` parity** ([packages/aigx](packages/aigx/)): the same interactive agent selection and
+  embedded integrations, fully self-contained. The `aigx` CLI is bumped to **1.3.0**.
+- **New integration templates**: `aider.conf.yml` and a generic `AGENTS.md`
+  ([integrations/agents](integrations/agents/)), wired into both scaffolders.
+
+### Repo & structure
+- **`editors/`** directory added; the meta-genome now indexes the grammar, the extension entry, and its
+  genome library, with rules for grammar-canonicalness (`ARCH-grammar-canonical`) and editor
+  zero-dependency (`ARCH-editor-zero-dep`).
 
 ---
 

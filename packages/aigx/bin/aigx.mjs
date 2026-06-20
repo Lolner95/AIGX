@@ -18,12 +18,13 @@
  * Spec: https://github.com/Lolner95/AIGX/blob/main/standard/AIGX-1.1.md
  */
 import {
-  existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, statSync
+  existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, statSync, appendFileSync
 } from 'node:fs'
 import { join, resolve, relative, dirname, basename } from 'node:path'
-import { argv, exit, stdout, version as nodeVersion, platform } from 'node:process'
+import { argv, exit, stdout, stdin, env, version as nodeVersion, platform } from 'node:process'
+import { createInterface } from 'node:readline'
 
-const VERSION = '1.2.0'
+const VERSION = '1.3.0'
 const SPEC_VERSION = '1.1'
 
 // ── ANSI (respects NO_COLOR / non-TTY) ──────────────────────────────────────
@@ -33,6 +34,18 @@ const bold = s => c('1', s), dim = s => c('2', s)
 const green = s => c('32', s), red = s => c('31', s)
 const yellow = s => c('33', s), cyan = s => c('36', s)
 const ok = green('✔'), warn = yellow('!'), bad = red('✖')
+
+// ── truecolor gradient (for the init banner) + prompt helper ─────────────────
+const TRUECOLOR = stdout.isTTY && !env.NO_COLOR
+const rgb = (r, g, b, s) => TRUECOLOR ? `\x1b[38;2;${r};${g};${b}m${s}\x1b[0m` : s
+const GRAD = [[34, 197, 94], [59, 130, 246], [139, 92, 246], [245, 158, 11]]
+const gradient = s => {
+  const ch = [...s], n = Math.max(1, ch.length - 1)
+  const lerp = (a, b, t) => Math.round(a + (b - a) * t)
+  const at = t => { const seg = Math.min(GRAD.length - 2, Math.floor(t * (GRAD.length - 1))); const lt = t * (GRAD.length - 1) - seg; return GRAD[seg].map((c, i) => lerp(c, GRAD[seg + 1][i], lt)) }
+  return ch.map((c, i) => c === ' ' ? c : rgb(...at(i / n), c)).join('')
+}
+const ask = (rl, q) => new Promise(res => rl.question(q, res))
 
 // ── Parser primitives (mirror tools/aigx-lint/aigx_lint.py) ──────────────────
 const RULE_RE   = /<rule\s+id="([^"]+)"/g
@@ -244,25 +257,107 @@ function cmdResolve(root, target, json, ignores) {
   return exists ? 0 : 2
 }
 
-// ── command: init ──────────────────────────────────────────────────────────
-function cmdInit(cwd, minimal, force) {
+// ── command: init (interactive, self-contained) ──────────────────────────────
+function initBanner() {
+  console.log(`\n  🧬  ${bold(gradient('A  I  G  X'))}   ${dim('·  AI Genome Exchange')}\n  ${dim('─'.repeat(52))}`)
+}
+
+function parseAgentSel(input) {
+  const s = input.trim().toLowerCase()
+  if (s === 'none' || s === '0') return []
+  if (s === '' || s === 'a' || s === 'all') return INTEGRATIONS.slice()
+  const picked = new Set()
+  for (const tok of s.split(/[\s,]+/).filter(Boolean)) {
+    const r = tok.match(/^(\d+)-(\d+)$/)
+    if (r) { for (let i = +r[1]; i <= +r[2]; i++) if (INTEGRATIONS[i - 1]) picked.add(INTEGRATIONS[i - 1]) }
+    else if (/^\d+$/.test(tok)) { if (INTEGRATIONS[+tok - 1]) picked.add(INTEGRATIONS[+tok - 1]) }
+    else { const a = INTEGRATIONS.find(x => x.key === tok); if (a) picked.add(a) }
+  }
+  return [...picked]
+}
+
+function writeIntegration(cwd, a, force, made, appended, skipped) {
+  const dest = join(cwd, a.dest)
+  mkdirSync(dirname(dest), { recursive: true })
+  if (a.append && existsSync(dest)) {
+    if (read(dest).toLowerCase().includes('aigx')) { skipped.push(a.dest); return }
+    appendFileSync(dest, '\n---\n\n' + a.body, 'utf8'); appended.push(a.dest); return
+  }
+  if (existsSync(dest) && !force) { skipped.push(a.dest); return }
+  writeFileSync(dest, a.body, 'utf8'); made.push(a.dest)
+}
+
+async function cmdInit(cwd, args) {
+  const force = args.includes('--force') || args.includes('-f')
+  const aigxOnly = args.includes('--aigx-only')
+  const yes = args.includes('--yes') || args.includes('-y')
+  const noCi = args.includes('--no-ci')
+  const flagged = INTEGRATIONS.filter(a => args.includes('--' + a.key))
+  const interactive = !!stdin.isTTY && !!stdout.isTTY && !yes && !aigxOnly && flagged.length === 0
+  let minimal = args.includes('--minimal')
+
+  initBanner()
+
+  let chosen = [], ci = !noCi
+  if (aigxOnly) { chosen = []; ci = false }
+  else if (flagged.length) { chosen = flagged }
+  else if (yes) { chosen = INTEGRATIONS.slice() }
+  else if (interactive) {
+    const rl = createInterface({ input: stdin, output: stdout })
+    if (!minimal) {
+      const g = await ask(rl, `\n  ${bold('Genome:')} [${cyan('1')}] full  [${cyan('2')}] minimal ${dim('(3 files)')}  ${dim('· Enter = full')}\n  ${cyan('→')} `)
+      minimal = g.trim() === '2' || /^min/i.test(g.trim())
+    }
+    console.log(`\n  ${bold('Which agent(s) should inherit the genome?')}\n`)
+    INTEGRATIONS.forEach((a, i) => console.log(`    ${cyan('[' + (i + 1) + ']')} ${a.label}`))
+    console.log(`\n  ${dim('numbers (1 2), a range (1-4), all, or none  ·  Enter = all')}`)
+    chosen = parseAgentSel(await ask(rl, `  ${cyan('→')} `))
+    ci = !/^n/i.test((await ask(rl, `\n  ${bold('Add a GitHub Action to validate in CI?')} ${dim('[Y/n]')} ${cyan('→')} `)).trim())
+    rl.close()
+  } else { chosen = []; ci = false } // non-interactive, no flags → just the genome
+
+  // 1) the genome
   const dir = join(cwd, '.aigx')
   mkdirSync(dir, { recursive: true })
   const set = minimal
     ? { 'protocol.aigx': T_PROTOCOL, 'architecture.aigx': T_ARCH, 'files.aigx': T_FILES }
     : { 'protocol.aigx': T_PROTOCOL, 'product.aigx': T_PRODUCT, 'architecture.aigx': T_ARCH,
         'engineering.aigx': T_ENG, 'files.aigx': T_FILES, 'agent.aigx': T_AGENT }
-  const made = [], skipped = []
+  const made = [], appended = [], skipped = []
   for (const [fn, body] of Object.entries(set)) {
     const p = join(dir, fn)
-    if (existsSync(p) && !force) { skipped.push(fn); continue }
-    writeFileSync(p, body, 'utf8'); made.push(fn)
+    if (existsSync(p) && !force) { skipped.push('.aigx/' + fn); continue }
+    writeFileSync(p, body, 'utf8'); made.push('.aigx/' + fn)
   }
-  console.log(`\n  ${bold('AIGX')} ${dim('AI Genome Exchange')}\n`)
-  for (const fn of made) console.log(`  ${ok} .aigx/${cyan(fn)}`)
-  if (skipped.length) console.log(`\n  ${warn} skipped (exist): ${skipped.join(', ')} — use ${cyan('--force')} to overwrite`)
-  console.log(`\n  Next: fill in ${cyan('.aigx/files.aigx')}, then run ${cyan('aigx lint')}.`)
-  console.log(`  Guide: ${dim('https://github.com/Lolner95/AIGX/blob/main/docs/aigx-in-60-seconds.md')}\n`)
+  // 2) chosen integrations
+  for (const a of chosen) writeIntegration(cwd, a, force, made, appended, skipped)
+  // 3) CI
+  if (ci) {
+    const p = join(cwd, '.github', 'workflows', 'aigx-validate.yml')
+    mkdirSync(dirname(p), { recursive: true })
+    if (existsSync(p) && !force) skipped.push('.github/workflows/aigx-validate.yml')
+    else { writeFileSync(p, INT_CI, 'utf8'); made.push('.github/workflows/aigx-validate.yml') }
+  }
+
+  // summary
+  console.log()
+  const genomeFiles = made.filter(f => f.startsWith('.aigx/'))
+  const intFiles = made.filter(f => !f.startsWith('.aigx/'))
+  if (genomeFiles.length) { console.log(`  ${bold('Genome')}`); genomeFiles.forEach(f => console.log(`    ${ok} ${cyan(f)}`)) }
+  if (intFiles.length || appended.length) {
+    console.log(`\n  ${bold('Integrations')}`)
+    intFiles.forEach(f => console.log(`    ${ok} ${cyan(f)}`))
+    appended.forEach(f => console.log(`    ${yellow('+')} ${cyan(f)} ${dim('(aigx section appended)')}`))
+  }
+  if (skipped.length) console.log(`\n  ${dim('↷ ' + skipped.length + ' existing file(s) left untouched — use ')}${cyan('--force')}${dim(' to overwrite')}`)
+  console.log(`
+  ${green('★')} ${bold('Three things to make it yours:')}
+    ${green('1.')} ${cyan('.aigx/files.aigx')}        ${dim('← the keystone: one <file> entry per file an agent edits')}
+    ${green('2.')} ${cyan('.aigx/architecture.aigx')}  ${dim('replace the TODO rules with yours')}
+    ${green('3.')} ${cyan('.aigx/product.aigx')}       ${dim('product, quality bar, freshness clause')}
+
+  ${green('★')} ${bold('Verify:')}  ${cyan('aigx lint')}   ${dim('· 60-second guide: https://github.com/Lolner95/AIGX/blob/main/docs/aigx-in-60-seconds.md')}
+`)
   return 0
 }
 
@@ -369,7 +464,7 @@ function help() {
     aigx <command> [options]
 
   ${bold('Commands')}
-    ${cyan('init')} [--minimal] [--force]     scaffold a .aigx/ genome in the current directory
+    ${cyan('init')} [--minimal] [--yes] [--cursor…]  scaffold a .aigx/ genome + agent integrations (interactive)
     ${cyan('lint')} [--root DIR] [--json]      validate genome(s); non-zero exit on errors
     ${cyan('resolve')} <path> [--root DIR]     print the boundary for one file (O(1) lookup)
     ${cyan('doctor')} [--root DIR]             environment + genome health check
@@ -401,7 +496,7 @@ function getAllFlagValues(args, name) {
   for (let i = 0; i < args.length; i++) if (args[i] === name && i + 1 < args.length) out.push(args[i + 1])
   return out
 }
-function main() {
+async function main() {
   const args = argv.slice(2)
   if (args.includes('--version') || args.includes('-v')) { console.log(VERSION); return 0 }
   const cmd = args[0]
@@ -413,7 +508,7 @@ function main() {
   const ignores = loadIgnores(root, getAllFlagValues(args, '--exclude'))
 
   switch (cmd) {
-    case 'init': return cmdInit(resolve('.'), args.includes('--minimal'), args.includes('--force'))
+    case 'init': return await cmdInit(resolve('.'), args)
     case 'lint': return cmdLint(root, json, ignores)
     case 'resolve': {
       const target = args[1] && !args[1].startsWith('-') ? args[1] : null
@@ -481,4 +576,77 @@ const T_AGENT = `<aigx-agent>
 </aigx-agent>
 `
 
-exit(main())
+// ── embedded agent integrations (compact addenda; the rich versions live in /integrations) ──
+const INT_CURSOR = `---
+description: AIGX genome — read .aigx/ before editing any file
+alwaysApply: true
+---
+
+This repository uses AIGX (AI Genome Exchange). Read \`.aigx/protocol.aigx\` first. For EACH file you
+edit, find its \`<file path="...">\` entry in \`.aigx/files.aigx\` — obey its \`<forbid pri="CRIT">\`, heed
+its \`<gotcha>\`, and verify every id in its \`<check>\` before finishing. The \`<rule id="...">\` text lives
+in the concern files (\`.aigx/<concern>.aigx\`). Keep the genome current: update a file's \`path\` on rename,
+add a \`<file>\` entry for new files, never reuse a rule id. Validate with \`aigx lint\`.
+`
+const INT_CLAUDE = `## AIGX — AI Genome Exchange
+
+This repository's AI-agent rules live in \`.aigx/\` (a genome with a per-file boundary index). Read
+\`.aigx/protocol.aigx\` first; then, for EACH file you edit, find its \`<file path="...">\` entry in
+\`.aigx/files.aigx\` — obey its \`<forbid pri="CRIT">\`, heed its \`<gotcha>\`, and verify every id in its
+\`<check>\` before finishing. The \`<rule id="...">\` text lives in the concern files
+(\`.aigx/architecture.aigx\`, etc.). Keep the genome current: update a file's \`path\` when you rename it;
+add a \`<file>\` entry for new files agents will edit; never rename a rule id. Validate with \`aigx lint\`.
+`
+const INT_COPILOT = `# Copilot instructions — AIGX
+
+This repository uses AIGX (AI Genome Exchange). Before editing any file, read \`.aigx/protocol.aigx\`, then
+look up the file in \`.aigx/files.aigx\`: obey its \`<forbid pri="CRIT">\`, heed its \`<gotcha>\`, and verify
+every id in its \`<check>\` (defined in \`.aigx/<concern>.aigx\`) before finishing. Keep \`files.aigx\` paths
+in sync on rename; never reuse a rule id. Validate with \`aigx lint\`.
+`
+const INT_WINDSURF = `# Windsurf rules — AIGX
+
+This repository uses AIGX (AI Genome Exchange). Read .aigx/protocol.aigx first. For EACH file you edit,
+find its <file path="..."> entry in .aigx/files.aigx — obey its <forbid pri="CRIT">, heed its <gotcha>,
+and verify every id in its <check> before finishing. Rule text lives in .aigx/<concern>.aigx. Keep
+files.aigx paths in sync on rename; never reuse a rule id. Validate with: aigx lint
+`
+const INT_AIDER = `# Aider configuration for AIGX-enabled repos.
+# Loads the AIGX read protocol + self-maintenance rules as read-only context every session,
+# so Aider looks up each file it edits in .aigx/files.aigx and obeys its forbid/gotcha/check.
+read:
+  - .aigx/protocol.aigx
+  - .aigx/agent.aigx
+`
+const INT_AGENTS = `# AGENTS.md
+
+This repository uses **AIGX (AI Genome Exchange)**. Read \`.aigx/protocol.aigx\` first. For EACH file you
+edit, find its \`<file path="...">\` entry in \`.aigx/files.aigx\` — obey its \`<forbid pri="CRIT">\`, heed its
+\`<gotcha>\`, and verify every id in its \`<check>\` before finishing. The \`<rule id="...">\` text lives in the
+concern files (\`.aigx/architecture.aigx\`, etc.). Keep the genome current: update a file's \`path\` on rename,
+add a \`<file>\` entry for new files, never reuse a rule id. Validate with \`aigx lint\`.
+
+Full format: https://github.com/Lolner95/AIGX/blob/main/standard/AIGX-1.1.md
+`
+const INT_CI = `name: Validate AIGX genome
+on: [push, pull_request]
+jobs:
+  aigx:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - name: Validate the genome
+        run: npx --yes aigx lint
+`
+const INTEGRATIONS = [
+  { key: 'cursor',   label: 'Cursor',              dest: '.cursor/rules/aigx.mdc',          body: INT_CURSOR },
+  { key: 'claude',   label: 'Claude Code',         dest: 'CLAUDE.md',                       body: INT_CLAUDE, append: true },
+  { key: 'copilot',  label: 'GitHub Copilot',      dest: '.github/copilot-instructions.md', body: INT_COPILOT },
+  { key: 'windsurf', label: 'Windsurf',            dest: '.windsurfrules',                  body: INT_WINDSURF },
+  { key: 'aider',    label: 'Aider',               dest: '.aider.conf.yml',                 body: INT_AIDER },
+  { key: 'agents',   label: 'AGENTS.md (generic)', dest: 'AGENTS.md',                       body: INT_AGENTS, append: true }
+]
+
+main().then(c => exit(c)).catch(e => { console.error(e); exit(1) })

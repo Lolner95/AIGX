@@ -1,0 +1,74 @@
+{
+  "name": "aigx-language-support",
+  "displayName": "AIGX Language Support",
+  "description": "Syntax highlighting, file icons, snippets, autocomplete, hover, diagnostics, go-to-definition, formatting, and boundary resolution for AIGX (AI Genome Exchange) genomes.",
+  "version": "0.1.0",
+  "publisher": "aigx",
+  "license": "MIT",
+  "engines": { "vscode": "^1.75.0" },
+  "categories": ["Programming Languages", "Linters", "Snippets", "Formatters"],
+  "keywords": ["aigx", "ai genome exchange", "ai agents", "context", "llm", "cursor", "claude", "copilot"],
+  "repository": { "type": "git", "url": "https://github.com/Lolner95/AIGX.git", "directory": "editors/vscode" },
+  "homepage": "https://github.com/Lolner95/AIGX/tree/main/editors/vscode",
+  "bugs": { "url": "https://github.com/Lolner95/AIGX/issues" },
+  "main": "./extension.js",
+  "activationEvents": [
+    "onLanguage:aigx",
+    "workspaceContains:**/.aigx/files.aigx"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "aigx",
+        "aliases": ["AIGX", "aigx"],
+        "extensions": [".aigx"],
+        "configuration": "./language-configuration.json",
+        "icon": { "light": "./icons/aigx.svg", "dark": "./icons/aigx.svg" }
+      }
+    ],
+    "grammars": [
+      { "language": "aigx", "scopeName": "source.aigx", "path": "./syntaxes/aigx.tmLanguage.json" }
+    ],
+    "snippets": [
+      { "language": "aigx", "path": "./snippets/aigx.code-snippets" }
+    ],
+    "iconThemes": [
+      {
+        "id": "aigx-icons",
+        "label": "AIGX File Icons",
+        "path": "./icons/aigx-icon-theme.json"
+      }
+    ],
+    "commands": [
+      { "command": "aigx.resolve", "title": "AIGX: Resolve current file's boundary", "category": "AIGX" },
+      { "command": "aigx.lint", "title": "AIGX: Lint genome", "category": "AIGX" },
+      { "command": "aigx.gotoRule", "title": "AIGX: Go to rule definition", "category": "AIGX" }
+    ],
+    "menus": {
+      "editor/context": [
+        { "command": "aigx.resolve", "group": "navigation@9", "when": "editorTextFocus" }
+      ]
+    },
+    "configuration": {
+      "title": "AIGX",
+      "properties": {
+        "aigx.diagnostics.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show inline diagnostics for AIGX genomes (dangling checks, stale paths, duplicate rule ids, path escapes)."
+        },
+        "aigx.diagnostics.run": {
+          "type": "string",
+          "enum": ["onType", "onSave"],
+          "default": "onType",
+          "description": "When to re-validate the genome."
+        },
+        "aigx.format.normalizeBlankLines": {
+          "type": "boolean",
+          "default": true,
+          "description": "On format, collapse 3+ consecutive blank lines to one and trim trailing whitespace."
+        }
+      }
+    }
+  }
+}

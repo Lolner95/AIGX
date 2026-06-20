@@ -80,6 +80,25 @@
     <check>ARCH-examples-must-pass-lint</check>
   </file>
 
+  <file path="editors/textmate/aigx.tmLanguage.json" domain="editors">
+    <role>Canonical TextMate grammar for .aigx — reused by VS Code, GitHub Linguist, Zed, Sublime, TextMate</role>
+    <gotcha>This file is canonical; after editing, re-copy it to editors/vscode/syntaxes/aigx.tmLanguage.json so the extension matches</gotcha>
+    <check>ARCH-grammar-canonical</check>
+  </file>
+
+  <file path="editors/vscode/extension.js" domain="editors">
+    <role>VS Code extension entry — diagnostics, hover, go-to-definition, completion, format, resolve</role>
+    <forbid pri="CRIT">NEVER add an npm runtime dependency — only the vscode API, Node built-ins, and ./lib</forbid>
+    <gotcha>Every provider is wrapped so a parse bug never breaks the editor — keep that defensive posture</gotcha>
+    <check>ARCH-editor-zero-dep</check>
+  </file>
+
+  <file path="editors/vscode/lib/genome.js" domain="editors">
+    <role>Self-contained, offset-aware genome parser/validator powering the extension (no vscode dependency)</role>
+    <gotcha>Its validation must agree with the other reference validators (tools/aigx-lint, @aigx/lint, crates/aigx) — change them together</gotcha>
+    <check>ARCH-editor-zero-dep ARCH-validator-parity</check>
+  </file>
+
   <file path="crates/aigx/src/main.rs" domain="tooling">
     <role>The Rust reference validator/CLI (cargo install aigx) — lint, resolve, init; a third implementation that must agree with Node and Python</role>
     <forbid pri="CRIT">NEVER add an external crate — std-only; the [dependencies] table stays empty</forbid>

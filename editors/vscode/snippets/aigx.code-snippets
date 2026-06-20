@@ -1,0 +1,110 @@
+{
+  "Protocol file": {
+    "prefix": "protocol",
+    "description": "A complete protocol.aigx read protocol",
+    "body": [
+      "<aigx-protocol version=\"1.1\">",
+      "  <read-first>Open .aigx/files.aigx and find the &lt;file&gt; entry for EACH file you will edit; obey its &lt;forbid pri=\"CRIT\"&gt; and satisfy every id in its &lt;check&gt; before finishing.</read-first>",
+      "  <step n=\"1\">Read the per-concern rule files in .aigx/ that the task touches.</step>",
+      "  <step n=\"2\">Read .aigx/files.aigx for the per-file boundaries of files you edit.</step>",
+      "  <step n=\"3\">Schema-first; failing test first; minimal change, local blast radius.</step>",
+      "  <step n=\"4\">Run gates; verify each file's &lt;check&gt; ids hold before declaring done.</step>",
+      "</aigx-protocol>",
+      ""
+    ]
+  },
+  "Files boundary index": {
+    "prefix": "files",
+    "description": "A files.aigx boundary index skeleton",
+    "body": [
+      "<aigx-files>",
+      "  <file path=\"${1:src/path/to/file.ts}\" domain=\"${2:domain}\">",
+      "    <role>${3:one line — what this file is for}</role>",
+      "    <check>${4:ARCH-no-deep-imports}</check>",
+      "  </file>",
+      "</aigx-files>",
+      ""
+    ]
+  },
+  "File entry": {
+    "prefix": "file",
+    "description": "A single <file> boundary-index entry",
+    "body": [
+      "<file path=\"${1:src/path/to/file.ts}\" domain=\"${2:domain}\">",
+      "  <role>${3:one line — what this file is for}</role>",
+      "  <forbid pri=\"CRIT\">${4:NEVER import ...}</forbid>",
+      "  <gotcha>${5:the single worst pitfall for this file}</gotcha>",
+      "  <check>${6:ARCH-no-deep-imports}</check>",
+      "</file>"
+    ]
+  },
+  "File entry (minimal)": {
+    "prefix": "file-min",
+    "description": "A minimal <file> entry (role + check only)",
+    "body": [
+      "<file path=\"${1:src/path/to/file.ts}\" domain=\"${2:domain}\">",
+      "  <role>${3:one line — what this file is for}</role>",
+      "  <check>${4:ARCH-no-deep-imports}</check>",
+      "</file>"
+    ]
+  },
+  "Concern file": {
+    "prefix": "concern",
+    "description": "A concern file with rules",
+    "body": [
+      "<aigx-${1:architecture}>",
+      "  <rule id=\"${2:ARCH-no-deep-imports}\">${3:Import features only through their public barrel; deep imports are forbidden.}</rule>",
+      "</aigx-${1:architecture}>",
+      ""
+    ]
+  },
+  "Rule": {
+    "prefix": "rule",
+    "description": "A rule with a stable PREFIX-SLUG id",
+    "body": "<rule id=\"${1:ARCH-no-deep-imports}\">${2:the authoritative, complete rule text}</rule>"
+  },
+  "Forbid": {
+    "prefix": "forbid",
+    "description": "A hard NEVER-do boundary",
+    "body": "<forbid pri=\"CRIT\">${1:NEVER import @/features/.../internal/*}</forbid>"
+  },
+  "Gotcha": {
+    "prefix": "gotcha",
+    "description": "The single worst pitfall for a file",
+    "body": "<gotcha>${1:the single most important pitfall for this file}</gotcha>"
+  },
+  "Check": {
+    "prefix": "check",
+    "description": "Space-separated rule ids to verify",
+    "body": "<check>${1:ARCH-no-deep-imports} ${2:ENG-tenant-scope}</check>"
+  },
+  "Product file": {
+    "prefix": "product",
+    "description": "A product.aigx with a freshness clause",
+    "body": [
+      "<aigx-product name=\"${1:Product Name}\">",
+      "  <name>${1:Product Name}</name>",
+      "  <standard>${2:what 'good' means for this product}</standard>",
+      "  <freshness>${3:which older docs are historical and yield to this genome}</freshness>",
+      "  <stack>${4:language, framework, data layer, test runner}</stack>",
+      "</aigx-product>",
+      ""
+    ]
+  },
+  "Domain card": {
+    "prefix": "domain",
+    "description": "A per-domain card colocated with a feature folder",
+    "body": [
+      "<aigx-domain key=\"${1:suppliers}\" path=\"${2:src/features/suppliers}\">",
+      "  <purpose>${3:what this domain does}</purpose>",
+      "  <public_api>${4:the barrel / entry point}</public_api>",
+      "  <test>${5:the test policy for this domain}</test>",
+      "  <blast>${6:the blast radius}</blast>",
+      "  <facts>",
+      "    <fact>${7:a fact, tagged with the rule id it enforces (ARCH-narrow-public-api)}</fact>",
+      "  </facts>",
+      "</aigx-domain>",
+      ""
+    ]
+  }
+}

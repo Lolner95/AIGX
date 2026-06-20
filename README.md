@@ -366,6 +366,9 @@ aigx/
 ├── template/            ← npm package source (read by create-aigx)
 │   ├── aigx/            ← .aigx/ files
 │   └── integrations/    ← integration templates
+├── editors/
+│   ├── textmate/        ← canonical TextMate grammar (VS Code, Linguist, Zed, Sublime)
+│   └── vscode/          ← "AIGX Language Support" extension
 ├── crates/
 │   └── aigx/            ← Cargo: cargo install aigx — Rust reference validator (std-only)
 ├── tests/
@@ -379,6 +382,17 @@ aigx/
 
 ---
 
+## Editor support
+
+Open any `.aigx` file in VS Code with **[AIGX Language Support](editors/vscode/)** for syntax highlighting,
+file icons, snippets, autocomplete, **hover on rule ids**, **go-to-definition**, inline **diagnostics** (the
+same checks as `aigx-lint`), formatting, and **AIGX: Resolve current file's boundary**.
+
+Highlighting comes from one canonical [TextMate grammar](editors/textmate/) (`source.aigx`) that also drops
+into GitHub Linguist, Zed, Sublime Text, TextMate, Cursor, and Windsurf.
+
+---
+
 ## Status & roadmap
 
 - ✅ **Spec v1.1** — stable; **normative standard** with ABNF, JSON schema & IANA media type ([standard/](standard/))
@@ -387,14 +401,16 @@ aigx/
 - ✅ **`@aigx/parser` + `@aigx/lint`** — programmatic parsing & validation ([packages/](packages/))
 - ✅ **`pip install aigx` + `cargo install aigx`** — Python and Rust reference validators (three implementations, one spec)
 - ✅ **Conformance suite** — Python · Node · Rust validators agree fixture-for-fixture ([tests/conformance/](tests/conformance/))
-- ✅ **`npx create-aigx`** — scaffolds genome + Cursor + Claude Code + Copilot + Windsurf + CI in one command
+- ✅ **`npx create-aigx`** — interactive: pick your agent(s), then scaffold genome + integrations + CI
 - ✅ **`aigx-lint`** — validate genome in CI + O(1) per-file resolve. Zero-dep. ([tools/aigx-lint](tools/aigx-lint/))
 - ✅ **`aigx-sync`** — git hook auto-patches `files.aigx` on renames ([tools/aigx-sync](tools/aigx-sync/))
 - ✅ **`aigx-mcp`** — stdio MCP bridge exposing `aigx_resolve` for JIT context hydration ([tools/aigx-mcp](tools/aigx-mcp/))
 - ✅ **`aigx-export`** — safe `.aigx` / Markdown serializer with corruption guards, atomic write, and SHA-256 readback ([tools/aigx-export](tools/aigx-export/))
 - ✅ **Integrations** — ready-to-use configs for 7 tools ([integrations/](integrations/))
 - ✅ **Meta-genome** — this repo uses AIGX to describe itself (`.aigx/`)
-- 🔜 VS Code extension — hover a file → see its `.aigx` boundary inline
+- ✅ **VS Code extension** — highlighting · icons · snippets · diagnostics · hover · go-to-definition · format ([editors/vscode](editors/vscode/))
+- ✅ **TextMate grammar** — one canonical grammar reused across editors + Linguist ([editors/textmate](editors/textmate/))
+- 🔜 Language Server (LSP) — the same intelligence in any LSP-capable editor
 - 🔜 Monorepo-scale benchmark (5k+ files) and more worked examples (Python, Go)
 
 Want to help? [CONTRIBUTING.md](CONTRIBUTING.md) · [open an issue](https://github.com/Lolner95/AIGX/issues) · star the repo to follow along.

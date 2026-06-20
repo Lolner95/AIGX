@@ -1,0 +1,31 @@
+{
+  "iconDefinitions": {
+    "aigx":              { "iconPath": "./aigx.svg" },
+    "aigx-protocol":     { "iconPath": "./protocol.svg" },
+    "aigx-files":        { "iconPath": "./files.svg" },
+    "aigx-architecture": { "iconPath": "./architecture.svg" },
+    "aigx-product":      { "iconPath": "./product.svg" },
+    "aigx-testing":      { "iconPath": "./testing.svg" },
+    "_file":             { "iconPath": "./file.svg" },
+    "_folder":           { "iconPath": "./folder.svg" },
+    "_folder_open":      { "iconPath": "./folder-open.svg" }
+  },
+  "file": "_file",
+  "folder": "_folder",
+  "folderExpanded": "_folder_open",
+  "fileExtensions": {
+    "aigx": "aigx"
+  },
+  "fileNames": {
+    "protocol.aigx": "aigx-protocol",
+    "files.aigx": "aigx-files",
+    "architecture.aigx": "aigx-architecture",
+    "product.aigx": "aigx-product",
+    "testing.aigx": "aigx-testing"
+  },
+  "light": {
+    "file": "_file",
+    "folder": "_folder",
+    "folderExpanded": "_folder_open"
+  }
+}
